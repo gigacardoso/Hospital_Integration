@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<order xmlns="http://saude365.pt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://saude365.pt patient-report.xsd ">
+      <substancia>Acido acetilsalicilico</substancia>
+      <nome>Aspirina</nome>
+      <dose>500 mg</dose>
+      <orderSize>50</orderSize>
+</order>

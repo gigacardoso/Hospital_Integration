@@ -1,0 +1,49 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+   <entry key="root_descriptor_alias">PATIENT</entry>
+   <entry key="PATIENT.NUM:db_column_not_null">true</entry>
+   <entry key="PATIENT.PHONE_NUMBER:db_column_not_null">false</entry>
+   <entry key="PATIENT.BIRTHDAY:db_column_type">DATE</entry>
+   <entry key="PATIENT:db_table_type">TABLE</entry>
+   <entry key="PATIENT.HEALTH_INSURANCE:db_column_size">255</entry>
+   <entry key="PATIENT.PHONE_NUMBER:db_column_type">VARCHAR2</entry>
+   <entry key="PATIENT.PATIENT_ID:db_column_size">255</entry>
+   <entry key="PATIENT.POSTCODE:db_column_type">VARCHAR2</entry>
+   <entry key="PATIENT.BIRTHDAY:db_column_not_null">true</entry>
+   <entry key="PATIENT.STREET:db_column_not_null">true</entry>
+   <entry key="PATIENT.NAME:db_column_type">VARCHAR2</entry>
+   <entry key="PATIENT.PHONE_NUMBER:db_column_size">255</entry>
+   <entry key="PATIENT.STORY:db_column_not_null">false</entry>
+   <entry key="PATIENT.POSTCODE:db_column_size">255</entry>
+   <entry key="PATIENT.POSTCODE:db_column_not_null">true</entry>
+   <entry key="PATIENT.PATIENT_ID:db_column_not_null">true</entry>
+   <entry key="PATIENT.NAME:db_column_size">255</entry>
+   <entry key="PATIENT.ADDRESS_VALID:db_column_type">VARCHAR2</entry>
+   <entry key="PATIENT.ADDRESS_VALID:db_column_not_null">false</entry>
+   <entry key="PATIENT.STREET:db_column_type">VARCHAR2</entry>
+   <entry key="PATIENT.NUM:db_column_type">VARCHAR2</entry>
+   <entry key="PATIENT.APART:db_column_type">VARCHAR2</entry>
+   <entry key="PATIENT.HEALTH_INSURANCE:db_column_not_null">false</entry>
+   <entry key="PATIENT:db_column_10">ADDRESS_VALID</entry>
+   <entry key="PATIENT.NAME:db_column_not_null">true</entry>
+   <entry key="PATIENT.ADDRESS_VALID:db_column_size">255</entry>
+   <entry key="PATIENT.APART:db_column_not_null">false</entry>
+   <entry key="PATIENT.STREET:db_column_size">255</entry>
+   <entry key="PATIENT.NUM:db_column_size">255</entry>
+   <entry key="PATIENT.APART:db_column_size">255</entry>
+   <entry key="PATIENT.STORY:db_column_type">VARCHAR2</entry>
+   <entry key="PATIENT:db_column_9">PHONE_NUMBER</entry>
+   <entry key="PATIENT:db_column_8">APART</entry>
+   <entry key="PATIENT:db_column_7">STORY</entry>
+   <entry key="PATIENT:db_column_6">NUM</entry>
+   <entry key="PATIENT:db_column_5">STREET</entry>
+   <entry key="PATIENT:db_column_4">POSTCODE</entry>
+   <entry key="PATIENT:db_column_3">HEALTH_INSURANCE</entry>
+   <entry key="PATIENT:db_column_2">BIRTHDAY</entry>
+   <entry key="PATIENT:db_column_1">NAME</entry>
+   <entry key="PATIENT.HEALTH_INSURANCE:db_column_type">VARCHAR2</entry>
+   <entry key="PATIENT:db_column_0">PATIENT_ID</entry>
+   <entry key="PATIENT.STORY:db_column_size">255</entry>
+   <entry key="PATIENT.PATIENT_ID:db_column_type">VARCHAR2</entry>
+</properties>

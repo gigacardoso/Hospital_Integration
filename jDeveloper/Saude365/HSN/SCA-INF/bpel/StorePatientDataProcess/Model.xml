@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="StorePatientDataProcess" targetNamespace="http://xmlns.oracle.com/Saude365/HSN/StorePatientDataProcess" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:client="http://xmlns.oracle.com/Saude365/HSN/StorePatientDataProcess" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/file/Saude365/HSN/ReadPatientData" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/PatientDatabase" xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/ScreeningDrugDatabase" xmlns:ns4="http://cttvalidator/" xmlns:ns5="http://infarmedvalidate/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions" xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns6="http://xmlns.oracle.com/pcbpel/adapter/db/top/PatientDatabase" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:ns7="http://saude365.pt" xmlns:ns8="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/PatientSelect" xmlns:ns9="http://xmlns.oracle.com/pcbpel/adapter/db/top/PatientSelect" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns10="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/DrugDatabase" xmlns:ns11="http://xmlns.oracle.com/pcbpel/adapter/db/top/ScreeningDrugDatabase" xmlns:ns12="http://xmlns.oracle.com/pcbpel/adapter/db/top/DrugDatabase" xmlns:ns13="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/ScreeningDatabase" xmlns:ns14="http://xmlns.oracle.com/pcbpel/adapter/db/top/ScreeningDatabase" xmlns:ns15="http://xmlns.oracle.com/bpel/workflow/taskService" xmlns:task="http://xmlns.oracle.com/bpel/workflow/task" xmlns:wfcommon="http://xmlns.oracle.com/bpel/workflow/common" xmlns:wf="http://schemas.oracle.com/bpel/extensions/workflow" xmlns:ns16="http://xmlns.oracle.com/bpel/workflow/TaskEvidenceService" xmlns:ns17="http://xmlns.oracle.com/bpel/workflow/routingSlip" xmlns:ns18="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/SavePatientDB" xmlns:ns19="http://xmlns.oracle.com/pcbpel/adapter/file/Saude365/HSN/BOStart" id="BpPrc0">
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  --> 
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="ReadPatientData" partnerLinkType="ns1:Read_plt" myRole="Read_role"/>
+    <partnerLink name="PatientDatabase" partnerLinkType="ns2:PatientDatabase_plt" partnerRole="PatientDatabase_role"/>
+    <partnerLink name="CTTValidator" partnerLinkType="ns4:CTTValidator_PL" partnerRole="CTTValidator_Role"/>
+    <partnerLink name="DrugValidator" partnerLinkType="ns5:Infarmed_PL" partnerRole="Infarmed_Role"/>
+    <partnerLink name="DrugDatabase" partnerLinkType="ns10:DrugDatabase_plt" partnerRole="DrugDatabase_role"/>
+    <partnerLink name="ScreeningDatabase" partnerLinkType="ns13:ScreeningDatabase_plt" partnerRole="ScreeningDatabase_role"/>
+    <partnerLink name="ScreeningDrugDatabase" partnerLinkType="ns3:ScreeningDrugDatabase_plt" partnerRole="ScreeningDrugDatabase_role"/>
+    <partnerLink name="ApprovalRequest.TaskService_1" partnerLinkType="ns15:TaskService" partnerRole="TaskService" myRole="TaskServiceCallbackListener"/>
+    <partnerLink name="SavePatientDB" partnerLinkType="ns18:SavePatientDB_plt" partnerRole="SavePatientDB_role"/>
+    <partnerLink name="BOStart" partnerLinkType="ns19:Write_plt" partnerRole="Write_role"/>
+  </partnerLinks>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="inputVariable" messageType="ns1:Read_msg"/>
+    <variable name="CheckPatientOutput" messageType="ns2:PatientCollection_msg"/>
+    <variable name="Postcode" messageType="ns4:validateInput"/>
+    <variable name="ValidatePostcodeOutput" messageType="ns4:validateOutput"/>
+    <variable name="Patient" messageType="ns18:PatientCollection_msg"/>
+    <variable name="Patient_PK" messageType="ns2:selectByPrimaryKey_inputParameters"/>
+    <variable name="Drug" messageType="ns5:validateDrugsInput"/>
+    <variable name="DrugCheckOutput" messageType="ns5:validateDrugsOutput"/>
+    <variable name="ValidatedDrug" messageType="ns10:DrugsCollection_msg"/>
+    <variable name="DrugCounter" type="xsd:int"/>
+    <variable name="Screening" messageType="ns13:ScreeningCollection_msg"/>
+    <variable name="DrugCollection" messageType="ns10:DrugsCollection_msg"/>
+    <variable name="ApprovalRequest2_globalVariable" messageType="ns15:taskMessage"/>
+    <variable name="ScreeningPK" messageType="ns3:selectByPrimaryKey_inputParameters"/>
+    <variable name="ScreeningForApproval" messageType="ns3:ScreeningCollection_msg"/>
+    <variable name="ApprovalRequest1_globalVariable" messageType="ns15:taskMessage"/>
+    <variable name="StartBO" messageType="ns19:Write_msg"/>
+  </variables>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main" id="BpSeq0">
+
+    <!-- Receive input from requestor. (Note: This maps to operation defined in StorePatientDataProcess.wsdl) -->
+    <receive name="receiveInput" variable="inputVariable" createInstance="yes" partnerLink="ReadPatientData" portType="ns1:Read_ptt" operation="Read" id="BpRcv0"/>
+    <assign name="AssignCheckPatient" id="BpAss0">
+      <copy>
+        <from variable="inputVariable" part="body" query="/ns7:relatorio/ns7:doente/ns7:id"/>
+        <to variable="Patient_PK" part="selectByPrimaryKey_inputParameters" query="/ns6:PatientPrimaryKey/ns6:patientId"/>
+      </copy>
+    </assign>
+    <invoke name="CheckPatient" inputVariable="Patient_PK" outputVariable="CheckPatientOutput" partnerLink="PatientDatabase" portType="ns2:PatientDatabase_ptt" operation="selectByPrimaryKey" bpelx:invokeAsDetail="no" id="BpInv0"/>
+    <switch name="Switch1" id="BpSwt0">
+      <case condition="bpws:getVariableData('CheckPatientOutput','PatientCollection','/ns6:PatientCollection/ns6:Patient/ns6:patientId') = bpws:getVariableData('Patient_PK','selectByPrimaryKey_inputParameters','/ns6:PatientPrimaryKey/ns6:patientId')">
+        <bpelx:annotation>
+          <bpelx:general>
+            <bpelx:property name="userLabel">PatientExists</bpelx:property>
+          </bpelx:general>
+        </bpelx:annotation>
+        <sequence id="BpSeq1">
+          <empty name="Empty" id="BpEmp0"/>
+        </sequence>
+      </case>
+      <otherwise>
+        <sequence name="Sequence1" id="BpSeq2">
+          <assign name="AssignPostCode" id="BpAss1">
+            <copy>
+              <from variable="inputVariable" part="body" query="/ns7:relatorio/ns7:doente/ns7:morada/ns7:codigoPostal"/>
+              <to variable="Postcode" part="parameters" query="/ns4:validate/arg0"/>
+            </copy>
+          </assign>
+          <invoke name="ValidatePostcode" inputVariable="Postcode" outputVariable="ValidatePostcodeOutput" partnerLink="CTTValidator" portType="ns4:CTTValidator" operation="validate" bpelx:invokeAsDetail="no" id="BpInv1"/>
+          <assign name="TransformToValidatedPatient" id="BpAss2">
+            <bpelx:annotation>
+              <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+              <from expression="ora:doXSLTransformForDoc('xsl/TransformationToValidatedPatient.xsl', $inputVariable.body, 'ValidatePostcodeOutput.parameters', $ValidatePostcodeOutput.parameters)"/>
+              <to variable="Patient" part="PatientCollection"/>
+            </copy>
+          </assign>
+          <invoke name="SaveValidatedPatient" inputVariable="Patient" partnerLink="SavePatientDB" portType="ns18:SavePatientDB_ptt" operation="insert" bpelx:invokeAsDetail="no" id="BpInv2"/>
+        </sequence>
+      </otherwise>
+    </switch>
+    <assign name="TransformToScreening" id="BpAss3">
+      <bpelx:annotation>
+        <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+        <from expression="ora:doXSLTransformForDoc('xsl/TransformationToScreening.xsl', $inputVariable.body)"/>
+        <to variable="Screening" part="ScreeningCollection"/>
+      </copy>
+    </assign>
+    <invoke name="SaveScreening" inputVariable="Screening" partnerLink="ScreeningDatabase" portType="ns13:ScreeningDatabase_ptt" operation="merge" bpelx:invokeAsDetail="no" id="BpInv3"/>
+    <assign name="InitializeCounter" id="BpAss4">
+      <copy>
+        <from expression="1"/>
+        <to variable="DrugCounter"/>
+      </copy>
+    </assign>
+    <while name="ForEveryDrug" condition="ora:countNodes('inputVariable','body','/ns7:relatorio/ns7:triagem/ns7:medicamento') >= bpws:getVariableData('DrugCounter')" id="BpWhl0">
+      <sequence id="BpSeq3">
+        <assign name="DrugPropertiesToMessage" id="BpAss5">
+          <copy>
+            <from expression="bpws:getVariableData('inputVariable','body',concat('/ns7:relatorio/ns7:triagem/ns7:medicamento[',bpws:getVariableData('DrugCounter'),']/ns7:nome'))"/>
+            <to variable="Drug" part="parameters" query="/ns5:validateDrugs/arg1"/>
+          </copy>
+          <copy>
+            <from expression="bpws:getVariableData('inputVariable','body',concat('/ns7:relatorio/ns7:triagem/ns7:medicamento[',bpws:getVariableData('DrugCounter'),']/ns7:dose'))"/>
+            <to variable="Drug" part="parameters" query="/ns5:validateDrugs/arg2"/>
+          </copy>
+          <copy>
+            <from expression="bpws:getVariableData('inputVariable','body',concat('/ns7:relatorio/ns7:triagem/ns7:medicamento[',bpws:getVariableData('DrugCounter'),']/ns7:substancia'))"/>
+            <to variable="Drug" part="parameters" query="/ns5:validateDrugs/arg0"/>
+          </copy>
+        </assign>
+        <invoke name="CheckDrug" inputVariable="Drug" outputVariable="DrugCheckOutput" partnerLink="DrugValidator" portType="ns5:Infarmed" operation="validateDrugs" bpelx:invokeAsDetail="no" id="BpInv4"/>
+        <assign name="TransformToValidDrug" id="BpAss6">
+          <bpelx:annotation>
+            <bpelx:pattern>transformation</bpelx:pattern>
+          </bpelx:annotation>
+          <copy>
+            <from expression="ora:doXSLTransformForDoc('xsl/TransformationToValidDrug.xsl', $inputVariable.body, 'Drug.parameters', $Drug.parameters, 'DrugCheckOutput.parameters', $DrugCheckOutput.parameters)"/>
+            <to variable="ValidatedDrug" part="DrugsCollection"/>
+          </copy>
+        </assign>
+        <invoke name="SaveValidatedDrug" inputVariable="ValidatedDrug" partnerLink="DrugDatabase" portType="ns10:DrugDatabase_ptt" operation="merge" bpelx:invokeAsDetail="no" id="BpInv5"/>
+        <assign name="Increment" id="BpAss7">
+          <copy>
+            <from expression="bpws:getVariableData('DrugCounter') + 1"/>
+            <to variable="DrugCounter"/>
+          </copy>
+        </assign>
+      </sequence>
+    </while>
+    <assign name="Transform1" id="BpAss8">
+      <bpelx:annotation>
+        <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+        <from expression="ora:doXSLTransformForDoc('xsl/TransformationToScreeningPK.xsl', $inputVariable.body)"/>
+        <to variable="ScreeningPK" part="selectByPrimaryKey_inputParameters"/>
+      </copy>
+    </assign>
+    <invoke name="Invoke1" inputVariable="ScreeningPK" outputVariable="ScreeningForApproval" partnerLink="ScreeningDrugDatabase" portType="ns3:ScreeningDrugDatabase_ptt" operation="selectByPrimaryKey" bpelx:invokeAsDetail="no" id="BpInv6"/>
+    <scope name="ApprovalRequest2" xmlns:wf="http://schemas.oracle.com/bpel/extensions/workflow" wf:key="ApprovalRequest1_globalVariable" id="BpScp0">
+      <bpelx:annotation>
+        <bpelx:pattern patternName="bpelx:workflow"/>
+      </bpelx:annotation>
+      <variables>
+        <variable name="initiateTaskInput" messageType="ns15:initiateTaskMessage"/>
+        <variable name="initiateTaskResponseMessage" messageType="ns15:initiateTaskResponseMessage"/>
+      </variables>
+      <sequence id="BpSeq4">
+        <assign name="ApprovalRequest2_AssignTaskAttributes" id="BpAss9">
+          <copy>
+            <from expression="number(3)"/>
+            <to variable="initiateTaskInput" part="payload" query="/ns15:initiateTask/task:task/task:priority"/>
+          </copy>
+          <copy>
+            <from expression="number(3)"/>
+            <to variable="initiateTaskInput" part="payload" query="/ns15:initiateTask/task:task/task:priority"/>
+          </copy>
+          <copy>
+            <from><payload xmlns="http://xmlns.oracle.com/bpel/workflow/task">
+ <Screening xmlns="http://xmlns.oracle.com/bpel/workflow/task"/>
+</payload></from>
+            <to variable="initiateTaskInput" part="payload" query="/ns15:initiateTask/task:task/task:payload"/>
+          </copy>
+          <copy>
+            <from variable="ScreeningForApproval" part="ScreeningCollection" query="/ns11:ScreeningCollection/ns11:Screening"/>
+            <to variable="initiateTaskInput" part="payload" query="/ns15:initiateTask/task:task/task:payload/task:Screening"/>
+          </copy>
+        </assign>
+        <invoke name="initiateTask_ApprovalRequest2" partnerLink="ApprovalRequest.TaskService_1" operation="initiateTask" portType="ns15:TaskService" inputVariable="initiateTaskInput" outputVariable="initiateTaskResponseMessage" id="BpInv7"/>
+        <receive name="receiveCompletedTask_ApprovalRequest2" partnerLink="ApprovalRequest.TaskService_1" portType="ns15:TaskServiceCallback" operation="onTaskCompleted" variable="ApprovalRequest1_globalVariable" createInstance="no" id="BpRcv1"/>
+      </sequence>
+    </scope>
+    <switch name="taskSwitch" id="BpSwt1">
+      <case condition="$ApprovalRequest1_globalVariable.payload/task:systemAttributes/task:outcome = 'REJECT'">
+        <bpelx:annotation>
+          <bpelx:pattern>Task outcome is REJECT</bpelx:pattern>
+          <bpelx:general>
+            <bpelx:property name="userLabel">Task outcome is REJECT</bpelx:property>
+          </bpelx:general>
+        </bpelx:annotation>
+        <sequence id="BpSeq5">
+          <assign id="BpAss10">
+            <copy>
+              <from variable="ApprovalRequest1_globalVariable" part="payload" query="/task:task/task:payload/task:Screening"/>
+              <to variable="ScreeningForApproval" part="ScreeningCollection" query="/ns11:ScreeningCollection/ns11:Screening"/>
+            </copy>
+          </assign><assign name="TransformToInvalid" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" id="BpAss11">
+      <bpelx:annotation xmlns:bpelx="http://schemas.oracle.com/bpel/extension">
+         <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+         <from expression="ora:doXSLTransformForDoc('xsl/TransformationToScreeningInvalid.xsl', $Screening.ScreeningCollection)"/>
+         <to variable="Screening" part="ScreeningCollection"/>
+      </copy>
+   </assign></sequence>
+      </case>
+      <case condition="$ApprovalRequest1_globalVariable.payload/task:systemAttributes/task:outcome = 'APPROVE'">
+        <bpelx:annotation>
+          <bpelx:pattern>Task outcome is APPROVE</bpelx:pattern>
+          <bpelx:general>
+            <bpelx:property name="userLabel">Task outcome is APPROVE</bpelx:property>
+          </bpelx:general>
+        </bpelx:annotation>
+        <sequence id="BpSeq6">
+          <assign id="BpAss12">
+            <copy>
+              <from variable="ApprovalRequest1_globalVariable" part="payload" query="/task:task/task:payload/task:Screening"/>
+              <to variable="ScreeningForApproval" part="ScreeningCollection" query="/ns11:ScreeningCollection/ns11:Screening"/>
+            </copy>
+          </assign>
+          <assign name="TransformToValid" id="BpAss13">
+            <bpelx:annotation>
+              <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+              <from expression="ora:doXSLTransformForDoc('xsl/TransformationToScreeningvalid.xsl', $Screening.ScreeningCollection)"/>
+              <to variable="Screening" part="ScreeningCollection"/>
+            </copy>
+          </assign>
+          <invoke name="StartBO" inputVariable="StartBO" partnerLink="BOStart" portType="ns19:Write_ptt" operation="Write" bpelx:invokeAsDetail="no" id="BpInv8"/>
+        </sequence>
+      </case>
+      <otherwise>
+        <sequence id="BpSeq7">
+          <assign id="BpAss14">
+            <copy>
+              <from variable="ApprovalRequest1_globalVariable" part="payload" query="/task:task/task:payload/task:Screening"/>
+              <to variable="ScreeningForApproval" part="ScreeningCollection" query="/ns11:ScreeningCollection/ns11:Screening"/>
+            </copy>
+          </assign>
+        </sequence>
+      </otherwise>
+    </switch>
+    <invoke name="SaveScreening" inputVariable="Screening" partnerLink="ScreeningDatabase" portType="ns13:ScreeningDatabase_ptt" operation="merge" bpelx:invokeAsDetail="no" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" id="BpInv9"/>
+  </sequence>
+</process><!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Wed Mar 20 16:35:08 WET 2013
+  Author:  oracle
+  Type: BPEL 1.1 Process
+  Purpose: One Way BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->

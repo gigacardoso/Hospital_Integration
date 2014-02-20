@@ -1,0 +1,28 @@
+<?binding.jca D_WaitingList_db.jca?>
+<wsdl:definitions name="D_WaitingList" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/D_WaitingList" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/D_WaitingList" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/D_WaitingList">
+    <plt:partnerLinkType name="D_WaitingList_plt">
+        <plt:role name="D_WaitingList_role">
+            <plt:portType name="tns:D_WaitingList_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/D_WaitingList" schemaLocation="xsd/D_WaitingList_table.xsd"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="DrugwaitinglistCollection_msg">
+        <wsdl:part name="DrugwaitinglistCollection" element="top:DrugwaitinglistCollection"/>
+    </wsdl:message>
+    <wsdl:message name="D_WaitingListSelect_inputParameters">
+        <wsdl:part name="D_WaitingListSelect_inputParameters" element="top:D_WaitingListSelectInputParameters"/>
+    </wsdl:message>
+    <wsdl:portType name="D_WaitingList_ptt">
+        <wsdl:operation name="delete">
+            <wsdl:input message="tns:DrugwaitinglistCollection_msg"/>
+        </wsdl:operation>
+        <wsdl:operation name="D_WaitingListSelect">
+            <wsdl:input message="tns:D_WaitingListSelect_inputParameters"/>
+            <wsdl:output message="tns:DrugwaitinglistCollection_msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

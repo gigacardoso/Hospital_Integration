@@ -1,0 +1,28 @@
+<?binding.jca PatientCheck_db.jca?>
+<wsdl:definitions name="PatientCheck" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/PatientCheck" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/PatientCheck" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/PatientCheck">
+    <plt:partnerLinkType name="PatientCheck_plt">
+        <plt:role name="PatientCheck_role">
+            <plt:portType name="tns:PatientCheck_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/PatientCheck" schemaLocation="xsd/PatientCheck_table.xsd"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="PatientCollection_msg">
+        <wsdl:part name="PatientCollection" element="top:PatientCollection"/>
+    </wsdl:message>
+    <wsdl:message name="selectByPrimaryKey_inputParameters">
+        <wsdl:part name="selectByPrimaryKey_inputParameters" element="top:PatientPrimaryKey"/>
+    </wsdl:message>
+    <wsdl:portType name="PatientCheck_ptt">
+        <wsdl:operation name="merge">
+            <wsdl:input message="tns:PatientCollection_msg"/>
+        </wsdl:operation>
+        <wsdl:operation name="selectByPrimaryKey">
+            <wsdl:input message="tns:selectByPrimaryKey_inputParameters"/>
+            <wsdl:output message="tns:PatientCollection_msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

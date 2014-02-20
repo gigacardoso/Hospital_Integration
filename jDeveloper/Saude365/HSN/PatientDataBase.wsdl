@@ -1,0 +1,25 @@
+<?binding.jca PatientDataBase_db.jca?>
+<wsdl:definitions name="PatientDataBase" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/PatientDataBase" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/PatientDataBase" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/PatientDataBase">
+    <plt:partnerLinkType name="PatientDataBase_plt">
+        <plt:role name="PatientDataBase_role">
+            <plt:portType name="tns:PatientDataBase_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/PatientDataBase" schemaLocation="xsd/PatientDataBase_table.xsd"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="selectByPrimaryKey_inputParameters">
+        <wsdl:part name="selectByPrimaryKey_inputParameters" element="top:PatientPrimaryKey"/>
+    </wsdl:message>
+    <wsdl:message name="PatientCollection_msg">
+        <wsdl:part name="PatientCollection" element="top:PatientCollection"/>
+    </wsdl:message>
+    <wsdl:portType name="PatientDataBase_ptt">
+        <wsdl:operation name="selectByPrimaryKey">
+            <wsdl:input message="tns:selectByPrimaryKey_inputParameters"/>
+            <wsdl:output message="tns:PatientCollection_msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

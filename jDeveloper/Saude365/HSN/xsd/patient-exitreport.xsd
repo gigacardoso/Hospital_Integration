@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- XML Schema - XSD -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://exitsaude365.pt"
+            xmlns:tns="http://exitsaude365.pt"
+            elementFormDefault="qualified">
+
+    <xsd:element name="relatoriosaida" type="tns:RelatorioSaidaType"/>
+
+    <xsd:complexType name="RelatorioSaidaType">
+        <xsd:sequence>
+            <xsd:element name="dataHora" type="xsd:dateTime"/>
+            <xsd:element name="nome" type="xsd:string"/>
+            <xsd:element name="id" type="xsd:string"/>
+            <xsd:element name="tipo" type="xsd:string"/>
+            <xsd:element name="review" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>    
+</xsd:schema>

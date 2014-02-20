@@ -1,0 +1,17 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<wsdl:definitions
+     name="CTTValidatorService"
+     targetNamespace="http://cttvalidator/"
+     xmlns:ns1="http://cttvalidator/"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    >
+    <plnk:partnerLinkType name="CTTValidator_PL">
+        <plnk:role name="CTTValidator_Role">
+            <plnk:portType name="ns1:CTTValidator"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <wsdl:import namespace="http://cttvalidator/" location="wsdl/CTTValidatorService.wsdl"/>
+</wsdl:definitions>

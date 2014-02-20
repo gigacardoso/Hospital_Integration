@@ -1,0 +1,36 @@
+<wsdl:definitions
+     name="ReadInvoice"
+     targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/file/Saude365/HSN/ReadInvoice"
+     xmlns:jca="http://xmlns.oracle.com/pcbpel/wsdl/jca/"
+     xmlns:ns1="urn:netdocs:schemas:document"
+     xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/file/Saude365/HSN/ReadInvoice"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:pc="http://xmlns.oracle.com/pcbpel/"
+     xmlns:imp1="urn:netdocs:schemas:message"
+     xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+    >
+  <plt:partnerLinkType name="Read_plt" >
+    <plt:role name="Read_role" >
+      <plt:portType name="tns:Read_ptt" />
+    </plt:role>
+  </plt:partnerLinkType>
+    <wsdl:types>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:jca="http://xmlns.oracle.com/pcbpel/wsdl/jca/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:pc="http://xmlns.oracle.com/pcbpel/" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/file/Saude365/HSN/ReadInvoice" xmlns:imp1="urn:netdocs:schemas:message" xmlns:ns1="urn:netdocs:schemas:document">
+            <include schemaLocation="xsd/generated.xsd"/>
+        </schema>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema" >
+        <import namespace="urn:netdocs:schemas:document" schemaLocation="xsd/maindoc/ND-Invoice-1.0.xsd" />
+      </schema>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema" >
+        <import namespace="urn:netdocs:schemas:message" schemaLocation="xsd/maindoc/ND-Message-1.0.xsd" />
+      </schema>
+    </wsdl:types>
+    <wsdl:message name="Read_msg">
+        <wsdl:part name="body" element="imp1:message"/>
+    </wsdl:message>
+    <wsdl:portType name="Read_ptt">
+        <wsdl:operation name="Read">
+            <wsdl:input message="tns:Read_msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

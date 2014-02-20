@@ -1,0 +1,21 @@
+<?binding.jca PharmacyUpdateStock_db.jca?>
+<wsdl:definitions name="PharmacyUpdateStock" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/PharmacyUpdateStock" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/PharmacyUpdateStock" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/PharmacyUpdateStock">
+    <plt:partnerLinkType name="PharmacyUpdateStock_plt">
+        <plt:role name="PharmacyUpdateStock_role">
+            <plt:portType name="tns:PharmacyUpdateStock_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/PharmacyUpdateStock" schemaLocation="xsd/PharmacyUpdateStock_table.xsd"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="PharmacyCollection_msg">
+        <wsdl:part name="PharmacyCollection" element="top:PharmacyCollection"/>
+    </wsdl:message>
+    <wsdl:portType name="PharmacyUpdateStock_ptt">
+        <wsdl:operation name="merge">
+            <wsdl:input message="tns:PharmacyCollection_msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- XML Schema - XSD -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://saude365.pt"
+            xmlns:tns="http://saude365.pt"
+            elementFormDefault="qualified">
+
+    <xsd:element name="invoice" type="tns:InvoiceType"/>
+
+    <xsd:complexType name="InvoiceType">
+        <xsd:sequence>
+            <xsd:element name="DocNumber" type="xsd:string"/>
+            <xsd:element name="Supplier" type="xsd:string"/>
+            <xsd:element name="TotalPrice" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+</xsd:schema>

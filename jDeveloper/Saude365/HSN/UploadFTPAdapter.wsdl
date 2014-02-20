@@ -1,0 +1,43 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<wsdl:definitions
+     name="UploadFTPAdapter"
+     targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/ftp/Saude365/HSN/UploadFTPAdapter"
+     xmlns:jca="http://xmlns.oracle.com/pcbpel/wsdl/jca/"
+     xmlns:ns1="urn:netdocs:schemas:document"
+     xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/ftp/Saude365/HSN/UploadFTPAdapter"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:imp1="urn:netdocs:schemas:message"
+     xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+    >
+    <plt:partnerLinkType name="Put_plt">
+        <plt:role name="Put_role">
+            <plt:portType name="tns:Put_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <wsdl:types>
+        <schema targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/ftp/Saude365/HSN/UploadFTPAdapter"
+             xmlns="http://www.w3.org/2001/XMLSchema" xmlns:jca="http://xmlns.oracle.com/pcbpel/wsdl/jca/"
+             xmlns:ns1="urn:netdocs:schemas:document" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/ftp/Saude365/HSN/UploadFTPAdapter"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:imp1="urn:netdocs:schemas:message"
+             xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+            <import namespace="urn:netdocs:schemas:message" schemaLocation="xsd/maindoc/ND-Message-1.0.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jca="http://xmlns.oracle.com/pcbpel/wsdl/jca/"
+             xmlns:ns1="urn:netdocs:schemas:document" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/ftp/Saude365/HSN/UploadFTPAdapter"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:imp1="urn:netdocs:schemas:message"
+             xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+            <xsd:import namespace="urn:netdocs:schemas:document" schemaLocation="xsd/maindoc/ND-Invoice-1.0.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="urn:netdocs:schemas:document" schemaLocation="xsd/maindoc/ND-DocumentStatus-1.0.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="Put_msg">
+        <wsdl:part name="body" element="imp1:message"/>
+    </wsdl:message>
+    <wsdl:portType name="Put_ptt">
+        <wsdl:operation name="Put">
+            <wsdl:input message="tns:Put_msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

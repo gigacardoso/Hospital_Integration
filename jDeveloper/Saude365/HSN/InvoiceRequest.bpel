@@ -1,0 +1,83 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Tue Apr 30 08:54:45 WEST 2013
+  Author:  oracle
+  Type: BPEL 1.1 Process
+  Purpose: One Way BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="InvoiceRequest"
+               targetNamespace="http://xmlns.oracle.com/Saude365/HSN/InvoiceRequest"
+               xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+               xmlns:client="http://xmlns.oracle.com/Saude365/HSN/InvoiceRequest"
+               xmlns:ora="http://schemas.oracle.com/xpath/extension"
+               xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+         xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/file/Saude365/HSN/ReadInvoice2"
+         xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/ftp/Saude365/HSN/DownloadFTPAdapter"
+         xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/ftp/Saude365/HSN/UploadFTPAdapter"
+         xmlns:ns4="http://xmlns.oracle.com/pcbpel/adapter/file/Saude365/HSN/WriteStatus"
+         xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+         xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  --> 
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="ReadInvoice2" partnerLinkType="ns1:Read_plt"
+                 myRole="Read_role"/>
+    <partnerLink name="UploadFTPAdapter" partnerLinkType="ns3:Put_plt"
+                 partnerRole="Put_role"/>
+  </partnerLinks>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="inputVariable" messageType="ns1:Read_msg"/>
+    <variable name="Invoice" messageType="ns3:Put_msg"/>
+    <variable name="statusFTP" messageType="ns2:Get_msg"/>
+    <variable name="statusToWrite" messageType="ns4:Write_msg"/>
+  </variables>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+
+    <!-- Receive input from requestor. (Note: This maps to operation defined in InvoiceRequest.wsdl) -->
+    <receive name="receiveInput" variable="inputVariable" createInstance="yes"
+             partnerLink="ReadInvoice2" portType="ns1:Read_ptt"
+             operation="Read"/>
+    <assign name="TransformToInvoiceFTP">
+      <bpelx:annotation>
+        <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+        <from expression="ora:doXSLTransformForDoc('xsl/TransformationToInvoiceFTP.xsl', $inputVariable.body)"/>
+        <to variable="Invoice" part="body"/>
+      </copy>
+    </assign>
+    <invoke name="UploadInvoice"
+            inputVariable="Invoice" partnerLink="UploadFTPAdapter"
+            portType="ns3:Put_ptt" operation="Put" bpelx:invokeAsDetail="no"/>
+  </sequence>
+</process>

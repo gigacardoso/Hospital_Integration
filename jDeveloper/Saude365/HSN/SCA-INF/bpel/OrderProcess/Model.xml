@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="OrderProcess" targetNamespace="http://xmlns.oracle.com/Saude365/HSN/OrderProcess" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:client="http://xmlns.oracle.com/Saude365/HSN/OrderProcess" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/PharmacyDB" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions" xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/db/top/PharmacyDB" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns3="http://hsn.pt" xmlns:ns4="http://xmlns.oracle.com/pcbpel/adapter/file/Saude365/HSN/PharmacyChange" xmlns:ns5="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/DBPharmacy" xmlns:ns6="http://xmlns.oracle.com/pcbpel/adapter/db/top/DBPharmacy" xmlns:ns7="http://generateorder/" xmlns:ns8="http://saphety/" xmlns:ns9="http://xmlns.oracle.com/pcbpel/adapter/file/Saude365/HSN/ReadInvoice" xmlns:ns10="http://xmlns.oracle.com/pcbpel/adapter/jms/Saude365/HSN/JMS_ORDER" xmlns:ns11="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/UpdateStock" xmlns:ns12="http://xmlns.oracle.com/pcbpel/adapter/ftp/Saude365/HSN/InvoiceReq" xmlns:ns13="http://xmlns.oracle.com/pcbpel/adapter/ftp/Saude365/HSN/InvoiceReq2" xmlns:ns14="http://xmlns.oracle.com/pcbpel/adapter/ftp/Saude365/HSN/InvoiceReqAdapter" xmlns:ns15="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/PharmacyUpdateStock" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns16="http://xmlns.oracle.com/pcbpel/adapter/ftp/Saude365/HSN/UploadFTPAdapter" xmlns:ns17="http://xmlns.oracle.com/pcbpel/adapter/file/Saude365/HSN/ReadInvoice2" xmlns:ns18="urn:netdocs:schemas:document" xmlns:ns19="http://xmlns.oracle.com/pcbpel/adapter/ftp/Saude365/HSN/DownloadFTPAdapter" xmlns:ns20="http://xmlns.oracle.com/pcbpel/adapter/file/Saude365/HSN/WriteStatus" id="BpPrc0">
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  --> 
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="PharmacyChange" partnerLinkType="ns4:Read_plt" myRole="Read_role"/>
+    <partnerLink name="GenerateOrder" partnerLinkType="ns7:OrderGenerator_PL" partnerRole="OrderGenerator_Role"/>
+    <partnerLink name="PharmacyDB" partnerLinkType="ns1:PharmacyDB_plt" partnerRole="PharmacyDB_role"/>
+    <partnerLink name="PharmacyUpdateStock" partnerLinkType="ns15:PharmacyUpdateStock_plt" partnerRole="PharmacyUpdateStock_role"/>
+  </partnerLinks>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="inputVariable" messageType="ns4:Read_msg"/>
+    <variable name="Count" type="xsd:int"/>
+    <variable name="Index" type="xsd:int"/>
+    <variable name="Pharmacy_Select" messageType="ns1:PharmacyDBSelect_inputParameters"/>
+    <variable name="Pharmacy_Output" messageType="ns1:PharmacyCollection_msg"/>
+    <variable name="GeneratorOrderInput" messageType="ns7:generateOrderInput"/>
+    <variable name="MessageToQueue" messageType="ns10:Produce_Message_msg"/>
+    <variable name="DrugStockUpdated" messageType="ns15:PharmacyCollection_msg"/>
+    <variable name="CreatedInvoice" messageType="ns17:Read_msg"/>
+    <variable name="InvoiceFTP" messageType="ns16:Put_msg"/>
+    <variable name="invoice" element="ns18:invoice"/>
+    <variable name="GetInvoice" messageType="ns19:Get_msg"/>
+    <variable name="Status" messageType="ns20:Write_msg"/>
+    <variable name="status" element="ns18:documentStatus"/>
+  </variables>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main" id="BpSeq0">
+
+    <!-- Receive input from requestor. (Note: This maps to operation defined in OrderProcess.wsdl) -->
+    <receive name="receiveInput" variable="inputVariable" createInstance="yes" partnerLink="PharmacyChange" portType="ns4:Read_ptt" operation="Read" id="BpRcv0"/>
+    <invoke name="GetOutOfStockMeds" inputVariable="Pharmacy_Select" outputVariable="Pharmacy_Output" partnerLink="PharmacyDB" portType="ns1:PharmacyDB_ptt" operation="PharmacyDBSelect" bpelx:invokeAsDetail="no" id="BpInv0"/>
+    <switch name="Switch1" id="BpSwt0">
+      <case condition="ora:countNodes('Pharmacy_Output','PharmacyCollection','/ns2:PharmacyCollection/ns2:Pharmacy')> 0">
+        <bpelx:annotation>
+          <bpelx:general>
+            <bpelx:property name="userLabel">OrderNeeded</bpelx:property>
+          </bpelx:general>
+        </bpelx:annotation>
+        <sequence id="BpSeq1">
+          <assign name="TransformToGenerateOrder" id="BpAss0">
+            <bpelx:annotation>
+              <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+              <from expression="ora:doXSLTransformForDoc('xsl/TransformationGenerateOrder2.xsl', $Pharmacy_Output.PharmacyCollection)"/>
+              <to variable="GeneratorOrderInput" part="parameters"/>
+            </copy>
+          </assign>
+          <invoke name="InvokeGenerateOrder" inputVariable="GeneratorOrderInput" partnerLink="GenerateOrder" portType="ns7:OrderGenerator" operation="generateOrder" bpelx:invokeAsDetail="no" id="BpInv1"/>
+          <assign name="TransformToUpdatedStock" id="BpAss1">
+            <bpelx:annotation>
+              <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+              <from expression="ora:doXSLTransformForDoc('xsl/TransformationToOrderInplace.xsl', $Pharmacy_Output.PharmacyCollection)"/>
+              <to variable="DrugStockUpdated" part="PharmacyCollection"/>
+            </copy>
+          </assign>
+          <invoke name="UpdateStock" inputVariable="DrugStockUpdated" partnerLink="PharmacyUpdateStock" portType="ns15:PharmacyUpdateStock_ptt" operation="merge" bpelx:invokeAsDetail="no" id="BpInv2"/>
+          <!--<invoke name="RequestInvoice" partnerLink="InvoiceRequest"
+                  portType="ns8:FTPInvoiceRequest" operation="RequestInvoice"
+                  inputVariable="tmp" outputVariable="tmp2"
+                  bpelx:invokeAsDetail="no"/>-->
+          <!--<invoke name="Invoke1"
+                  partnerLink="InvoiceReqAdapter" bpelx:invokeAsDetail="no"/>-->
+        </sequence>
+      </case>
+      <otherwise/>
+    </switch>
+  </sequence>
+</process><!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Mon Apr 08 18:57:34 WEST 2013
+  Author:  oracle
+  Type: BPEL 1.1 Process
+  Purpose: One Way BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->

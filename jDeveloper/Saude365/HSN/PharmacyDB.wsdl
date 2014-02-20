@@ -1,0 +1,25 @@
+<?binding.jca PharmacyDB_db.jca?>
+<wsdl:definitions name="PharmacyDB" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/PharmacyDB" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/PharmacyDB" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/PharmacyDB">
+    <plt:partnerLinkType name="PharmacyDB_plt">
+        <plt:role name="PharmacyDB_role">
+            <plt:portType name="tns:PharmacyDB_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/PharmacyDB" schemaLocation="xsd/PharmacyDB_table.xsd"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="PharmacyDBSelect_inputParameters">
+        <wsdl:part name="PharmacyDBSelect_inputParameters" element="top:PharmacyDBSelectInputParameters"/>
+    </wsdl:message>
+    <wsdl:message name="PharmacyCollection_msg">
+        <wsdl:part name="PharmacyCollection" element="top:PharmacyCollection"/>
+    </wsdl:message>
+    <wsdl:portType name="PharmacyDB_ptt">
+        <wsdl:operation name="PharmacyDBSelect">
+            <wsdl:input message="tns:PharmacyDBSelect_inputParameters"/>
+            <wsdl:output message="tns:PharmacyCollection_msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

@@ -1,0 +1,14 @@
+<adapter-config name="PharmacyDB" adapter="Database Adapter" wsdlLocation="PharmacyDB.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/mydb" UIConnectionName="mydb" adapterRef=""/>
+  <endpoint-interaction portType="PharmacyDB_ptt" operation="PharmacyDBSelect">
+    <interaction-spec className="oracle.tip.adapter.db.DBReadInteractionSpec">
+      <property name="DescriptorName" value="PharmacyDB.Pharmacy"/>
+      <property name="QueryName" value="PharmacyDBSelect"/>
+      <property name="MappingsMetaDataURL" value="PharmacyDB-or-mappings.xml"/>
+      <property name="ReturnSingleResultSet" value="false"/>
+      <property name="GetActiveUnitOfWork" value="false"/>
+    </interaction-spec>
+  </endpoint-interaction>
+
+</adapter-config>

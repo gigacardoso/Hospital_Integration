@@ -1,0 +1,63 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<graphics>
+   <diagram optimizeLayout="false" popupEditor="true" fixedWidthSwimlanes="true" roundedPartnerlinks="true" centerZoom="true" validateOnLoad="true" confirmBeforeDelete="true" selectedPartnerLinkColor="0,0,153" swimlaneBackground="240,240,240" swimlaneDividerBackground="218,218,218" graphBackground="255,255,255" selectedBorderBackground="49,105,198" connectedPartnerLinkColor="204,204,255" connectablePartnerLinkColor="0,0,255" unconnectedPartnerLinkColor="192,192,192"/>
+   <annotationfile/>
+   <iconize/>
+   <partnerlink_locations>
+      <partnerlink name="PatientEntry" x="0" y="90" side="left"/>
+      <partnerlink name="DrugWaitingListDB" x="0" y="18" side="left"/>
+      <partnerlink name="WritePatientExitReport" x="0" y="3146" side="left"/>
+      <partnerlink name="SelectScreeningDatabase" x="1037" y="909" side="right"/>
+      <partnerlink name="ValidatePatientData" x="1037" y="852" side="right"/>
+      <partnerlink name="PatientCheck" x="1037" y="422" side="right"/>
+      <partnerlink name="RegistryDatabase" x="1037" y="2022" side="right"/>
+      <partnerlink name="ExitReview.TaskService_1" x="1037" y="18" side="right"/>
+      <partnerlink name="DBPharmacy" x="1037" y="75" side="right"/>
+      <partnerlink name="CareUnitDatabase" x="1037" y="1281" side="right"/>
+      <partnerlink name="BackOfficeStarter" x="1037" y="1908" side="right"/>
+      <partnerlink name="SendSMS" x="1037" y="132" side="right"/>
+      <partnerlink name="MergeScreening" x="1037" y="1965" side="right"/>
+   </partnerlink_locations>
+   <graph_layout viewport="146,325,773,349" show_swimlanes="true">
+      <layout_item collapsed="false" xpath="/process" type="process" showhandlers="true"/>
+      <layout_item collapsed="false" xpath="/process/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[1]" type="switch"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[1]/case[1]/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[1]/case[2]/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[1]/otherwise/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]" type="switch"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[1]/sequence" type="sequence"/>
+      <layout_item collapsed="true" xpath="/process/sequence/switch[2]/case[1]/sequence/switch" type="switch"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[1]/sequence/switch/otherwise/sequence" type="sequence"/>
+      <layout_item collapsed="true" xpath="/process/sequence/switch[2]/case[1]/sequence/switch/otherwise/sequence/while" type="while"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[1]/sequence/switch/otherwise/sequence/while/sequence" type="sequence"/>
+      <layout_item collapsed="true" xpath="/process/sequence/switch[2]/case[1]/sequence/switch/otherwise/sequence/switch" type="switch"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[1]/sequence/switch/otherwise/sequence/switch/case/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[1]/sequence/switch/otherwise/sequence/switch/case/sequence/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[1]/sequence/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[2]/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[2]/sequence/switch" type="switch"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[2]/sequence/switch/otherwise/sequence" type="sequence"/>
+      <layout_item collapsed="true" xpath="/process/sequence/switch[2]/case[2]/sequence/switch/otherwise/sequence/while" type="while"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[2]/sequence/switch/otherwise/sequence/while/sequence" type="sequence"/>
+      <layout_item collapsed="true" xpath="/process/sequence/switch[2]/case[2]/sequence/switch/otherwise/sequence/switch" type="switch"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[2]/sequence/switch/otherwise/sequence/switch/case/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[2]/sequence/switch/otherwise/sequence/switch/case/sequence/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[2]/sequence/sequence" type="sequence"/>
+      <layout_item collapsed="true" xpath="/process/sequence/switch[2]/case[2]/sequence/sequence/flow" type="flow"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[2]/sequence/sequence/flow/sequence" type="sequence"/>
+      <layout_item collapsed="true" xpath="/process/sequence/switch[2]/case[2]/sequence/sequence/flow/sequence/while" type="while"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[2]/sequence/sequence/flow/sequence/while/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[2]/sequence/sequence/flow/sequence/while/sequence/switch" type="switch"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[2]/sequence/sequence/flow/sequence/while/sequence/switch/case/switch" type="switch"/>
+      <layout_item collapsed="true" xpath="/process/sequence/switch[2]/case[2]/sequence/sequence/flow/sequence/while/sequence/switch/case/switch/case/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[2]/sequence/sequence/flow/sequence/while/sequence/switch/case/switch/otherwise/sequence" type="sequence"/>
+      <layout_item collapsed="true" xpath="/process/sequence/switch[2]/case[2]/sequence/sequence/flow/sequence/while/sequence/switch/otherwise/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/otherwise/sequence" type="sequence"/>
+      <layout_item collapsed="true" xpath="/process/sequence/scope" type="usertask" showhandlers="true"/>
+      <layout_item collapsed="false" xpath="/process/sequence/scope/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[3]" type="switch"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[3]/case/sequence" type="sequence"/>
+   </graph_layout>
+   <bookmarks/>
+</graphics>

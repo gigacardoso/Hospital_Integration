@@ -1,0 +1,28 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<xs:schema targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/RegistryDatabase" xmlns="http://xmlns.oracle.com/pcbpel/adapter/db/top/RegistryDatabase" elementFormDefault="qualified" attributeFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <xs:element name="RegistryCollection" type="RegistryCollection"/>
+   <xs:complexType name="RegistryCollection">
+      <xs:sequence>
+         <xs:element name="Registry" type="Registry" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="Registry">
+      <xs:sequence>
+         <xs:element name="typem">
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:maxLength value="255"/>
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="patientId">
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:maxLength value="255"/>
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="dateVisit" type="xs:dateTime"/>
+      </xs:sequence>
+   </xs:complexType>
+</xs:schema>

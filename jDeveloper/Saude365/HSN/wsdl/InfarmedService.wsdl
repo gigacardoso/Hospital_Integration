@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<wsdl:definitions
+     name="InfarmedService"
+     targetNamespace="http://infarmedvalidate/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://infarmedvalidate/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+     xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+    >
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://infarmedvalidate/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://infarmedvalidate/">
+            <xsd:complexType name="validateDrugs">
+                <xsd:sequence>
+                    <xsd:element name="arg0" type="xsd:string"/>
+                    <xsd:element name="arg1" type="xsd:string"/>
+                    <xsd:element name="arg2" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="validateDrugs" type="tns:validateDrugs"/>
+            <xsd:complexType name="validateDrugsResponse">
+                <xsd:sequence>
+                    <xsd:element name="return" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="validateDrugsResponse" type="tns:validateDrugsResponse"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="validateDrugsInput">
+        <wsdl:part name="parameters" element="tns:validateDrugs"/>
+    </wsdl:message>
+    <wsdl:message name="validateDrugsOutput">
+        <wsdl:part name="parameters" element="tns:validateDrugsResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="Infarmed">
+        <wsdl:operation name="validateDrugs">
+            <wsdl:input message="tns:validateDrugsInput" xmlns:ns1="http://www.w3.org/2006/05/addressing/wsdl"
+                 ns1:Action=""/>
+            <wsdl:output message="tns:validateDrugsOutput" xmlns:ns1="http://www.w3.org/2006/05/addressing/wsdl"
+                 ns1:Action=""/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="InfarmedSoapHttp" type="tns:Infarmed">
+        <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+        <wsdl:operation name="validateDrugs">
+            <soap12:operation soapAction="" soapActionRequired="false"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="InfarmedService">
+        <wsdl:port name="InfarmedSoap12HttpPort" binding="tns:InfarmedSoapHttp">
+            <soap12:address location="http://localhost:7101/Saude365-InfarmedValidate-context-root/InfarmedSoap12HttpPort"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

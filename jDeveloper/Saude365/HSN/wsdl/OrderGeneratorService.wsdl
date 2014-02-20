@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<wsdl:definitions
+     name="OrderGeneratorService"
+     targetNamespace="http://generateorder/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://generateorder/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+     xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+    >
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://generateorder/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://generateorder/">
+            <xsd:complexType name="generateOrder">
+                <xsd:sequence>
+                    <xsd:element name="arg0" type="xsd:int"/>
+                    <xsd:element name="arg1" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+                    <xsd:element name="arg2" minOccurs="0" maxOccurs="unbounded" type="xsd:int"/>
+                    <xsd:element name="arg3" minOccurs="0" maxOccurs="unbounded" type="xsd:decimal"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="generateOrder" type="tns:generateOrder"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="generateOrderInput">
+        <wsdl:part name="parameters" element="tns:generateOrder"/>
+    </wsdl:message>
+    <wsdl:portType name="OrderGenerator">
+        <wsdl:operation name="generateOrder">
+            <wsdl:input message="tns:generateOrderInput" xmlns:ns1="http://www.w3.org/2006/05/addressing/wsdl"
+                 ns1:Action=""/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="OrderGeneratorSoapHttp" type="tns:OrderGenerator">
+        <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+        <wsdl:operation name="generateOrder">
+            <soap12:operation soapAction="" soapActionRequired="false"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="OrderGeneratorService">
+        <wsdl:port name="OrderGeneratorSoap12HttpPort" binding="tns:OrderGeneratorSoapHttp">
+            <soap12:address location="http://localhost:7101/Saude365-GenerateOrder-context-root/OrderGeneratorSoap12HttpPort"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

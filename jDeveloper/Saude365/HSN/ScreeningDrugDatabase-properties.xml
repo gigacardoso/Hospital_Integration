@@ -1,0 +1,49 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+   <entry key="root_descriptor_alias">SCREENING</entry>
+   <entry key="DRUGS.DRUGNAME:db_column_type">VARCHAR2</entry>
+   <entry key="DRUGS.PATIENT_ID:db_column_type">VARCHAR2</entry>
+   <entry key="SCREENING.TYPEM:db_column_type">VARCHAR2</entry>
+   <entry key="SCREENING.PATIENT_ID:db_column_type">VARCHAR2</entry>
+   <entry key="DRUGS.DRUGNAME:db_column_size">255</entry>
+   <entry key="DRUGS.PATIENT_ID:db_column_size">255</entry>
+   <entry key="SCREENING.TYPEM:db_column_size">255</entry>
+   <entry key="DRUGS:db_column_5">DRUG_VALID</entry>
+   <entry key="DRUGS.DATE_VISIT:db_column_type">TIMESTAMP(6)</entry>
+   <entry key="DRUGS:db_column_4">SUBSTANCE</entry>
+   <entry key="SCREENING.IMPORTANCE:db_column_not_null">true</entry>
+   <entry key="DRUGS:db_table_type">TABLE</entry>
+   <entry key="DRUGS:db_column_3">DOSAGE</entry>
+   <entry key="SCREENING.SCREENING_VALID:db_column_type">VARCHAR2</entry>
+   <entry key="DRUGS:db_column_2">DRUGNAME</entry>
+   <entry key="DRUGS:db_column_1">PATIENT_ID</entry>
+   <entry key="SCREENING.PATIENT_ID:db_column_size">255</entry>
+   <entry key="DRUGS:db_column_0">DATE_VISIT</entry>
+   <entry key="SCREENING:db_column_4">SCREENING_VALID</entry>
+   <entry key="SCREENING:db_column_3">IMPORTANCE</entry>
+   <entry key="SCREENING:db_column_2">TYPEM</entry>
+   <entry key="SCREENING.IMPORTANCE:db_column_type">VARCHAR2</entry>
+   <entry key="SCREENING:db_column_1">PATIENT_ID</entry>
+   <entry key="SCREENING.DATE_VISIT:db_column_type">TIMESTAMP(6)</entry>
+   <entry key="SCREENING:db_column_0">DATE_VISIT</entry>
+   <entry key="DRUGS.SUBSTANCE:db_column_not_null">true</entry>
+   <entry key="DRUGS.DRUG_VALID:db_column_type">VARCHAR2</entry>
+   <entry key="SCREENING.SCREENING_VALID:db_column_size">255</entry>
+   <entry key="SCREENING.DATE_VISIT:db_column_not_null">true</entry>
+   <entry key="SCREENING:db_table_type">TABLE</entry>
+   <entry key="DRUGS.DATE_VISIT:db_column_not_null">true</entry>
+   <entry key="DRUGS.DOSAGE:db_column_not_null">true</entry>
+   <entry key="SCREENING.IMPORTANCE:db_column_size">255</entry>
+   <entry key="SCREENING.SCREENING_VALID:db_column_not_null">false</entry>
+   <entry key="DRUGS.DRUG_VALID:db_column_size">255</entry>
+   <entry key="DRUGS.DRUGNAME:db_column_not_null">true</entry>
+   <entry key="DRUGS.DOSAGE:db_column_type">VARCHAR2</entry>
+   <entry key="DRUGS.DRUG_VALID:db_column_not_null">false</entry>
+   <entry key="DRUGS.SUBSTANCE:db_column_type">VARCHAR2</entry>
+   <entry key="SCREENING.PATIENT_ID:db_column_not_null">true</entry>
+   <entry key="DRUGS.PATIENT_ID:db_column_not_null">true</entry>
+   <entry key="DRUGS.DOSAGE:db_column_size">255</entry>
+   <entry key="SCREENING.TYPEM:db_column_not_null">true</entry>
+   <entry key="DRUGS.SUBSTANCE:db_column_size">255</entry>
+</properties>

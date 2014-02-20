@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- XML Schema - XSD -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://saude365.pt"
+            xmlns:tns="http://saude365.pt"
+            elementFormDefault="qualified">
+
+    <xsd:element name="order" type="tns:OrderType"/>
+
+    <xsd:complexType name="OrderType">
+        <xsd:sequence>
+            <xsd:element name="substancia" type="xsd:string"/>
+            <xsd:element name="nome" type="xsd:string"/>
+            <xsd:element name="dose" type="xsd:string"/>
+            <xsd:element name="orderSize" type="xsd:int"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+</xsd:schema>

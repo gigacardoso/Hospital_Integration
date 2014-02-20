@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Exam xmlns="http://saude365.pt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://saude365.pt patient-report.xsd ">
+  <id>586811</id>
+  <dataHora>2013-12-31T12:00:00</dataHora>
+  <tipo>Surgery</tipo>
+  <result>Correu tudo bem!</result>
+</Exam>

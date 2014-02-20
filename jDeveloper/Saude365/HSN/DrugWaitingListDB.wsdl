@@ -1,0 +1,21 @@
+<?binding.jca DrugWaitingListDB_db.jca?>
+<wsdl:definitions name="DrugWaitingListDB" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/DrugWaitingListDB" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/DrugWaitingListDB" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/DrugWaitingListDB">
+    <plt:partnerLinkType name="DrugWaitingListDB_plt">
+        <plt:role name="DrugWaitingListDB_role">
+            <plt:portType name="tns:DrugWaitingListDB_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/DrugWaitingListDB" schemaLocation="xsd/DrugWaitingListDB_table.xsd"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="DrugwaitinglistCollection_msg">
+        <wsdl:part name="DrugwaitinglistCollection" element="top:DrugwaitinglistCollection"/>
+    </wsdl:message>
+    <wsdl:portType name="DrugWaitingListDB_ptt">
+        <wsdl:operation name="merge">
+            <wsdl:input message="tns:DrugwaitinglistCollection_msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

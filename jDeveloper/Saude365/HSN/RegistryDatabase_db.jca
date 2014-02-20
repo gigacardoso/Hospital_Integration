@@ -1,0 +1,15 @@
+<adapter-config name="RegistryDatabase" adapter="Database Adapter" wsdlLocation="RegistryDatabase.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/mydb" UIConnectionName="MyConnection" adapterRef=""/>
+  <endpoint-interaction portType="RegistryDatabase_ptt" operation="merge">
+    <interaction-spec className="oracle.tip.adapter.db.DBWriteInteractionSpec">
+      <property name="DescriptorName" value="RegistryDatabase.Registry"/>
+      <property name="DmlType" value="merge"/>
+      <property name="MappingsMetaDataURL" value="RegistryDatabase-or-mappings.xml"/>
+      <property name="OptimizeMerge" value="true"/>
+      <property name="DetectOmissions" value="true"/>
+      <property name="GetActiveUnitOfWork" value="false"/>
+    </interaction-spec>
+  </endpoint-interaction>
+
+</adapter-config>

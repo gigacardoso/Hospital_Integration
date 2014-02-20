@@ -1,0 +1,25 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+   <entry key="DRUGWAITINGLIST.SUBSTANCE:db_column_type">VARCHAR2</entry>
+   <entry key="DRUGWAITINGLIST.DRUGNAME:db_column_not_null">true</entry>
+   <entry key="DRUGWAITINGLIST.DOSAGE:db_column_size">255</entry>
+   <entry key="DRUGWAITINGLIST.DRUGNAME:db_column_type">VARCHAR2</entry>
+   <entry key="DRUGWAITINGLIST.PATIENT_ID:db_column_size">255</entry>
+   <entry key="DRUGWAITINGLIST.DOSAGE:db_column_not_null">true</entry>
+   <entry key="DRUGWAITINGLIST.PATIENT_ID:db_column_not_null">true</entry>
+   <entry key="DRUGWAITINGLIST:db_table_type">TABLE</entry>
+   <entry key="DRUGWAITINGLIST.SUBSTANCE:db_column_size">255</entry>
+   <entry key="DRUGWAITINGLIST.SUBSTANCE:db_column_not_null">true</entry>
+   <entry key="DRUGWAITINGLIST.DATE_VISIT:db_column_not_null">true</entry>
+   <entry key="DRUGWAITINGLIST.DATE_VISIT:db_column_type">TIMESTAMP(6)</entry>
+   <entry key="DRUGWAITINGLIST.DRUGNAME:db_column_size">255</entry>
+   <entry key="root_descriptor_alias">DRUGWAITINGLIST</entry>
+   <entry key="DRUGWAITINGLIST.DOSAGE:db_column_type">VARCHAR2</entry>
+   <entry key="DRUGWAITINGLIST.PATIENT_ID:db_column_type">VARCHAR2</entry>
+   <entry key="DRUGWAITINGLIST:db_column_4">SUBSTANCE</entry>
+   <entry key="DRUGWAITINGLIST:db_column_3">DOSAGE</entry>
+   <entry key="DRUGWAITINGLIST:db_column_2">DRUGNAME</entry>
+   <entry key="DRUGWAITINGLIST:db_column_1">DATE_VISIT</entry>
+   <entry key="DRUGWAITINGLIST:db_column_0">PATIENT_ID</entry>
+</properties>

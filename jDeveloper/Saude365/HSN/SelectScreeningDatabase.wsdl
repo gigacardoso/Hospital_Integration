@@ -1,0 +1,25 @@
+<?binding.jca SelectScreeningDatabase_db.jca?>
+<wsdl:definitions name="SelectScreeningDatabase" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/SelectScreeningDatabase" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/SelectScreeningDatabase" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/SelectScreeningDatabase">
+    <plt:partnerLinkType name="SelectScreeningDatabase_plt">
+        <plt:role name="SelectScreeningDatabase_role">
+            <plt:portType name="tns:SelectScreeningDatabase_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/SelectScreeningDatabase" schemaLocation="xsd/SelectScreeningDatabase_table.xsd"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="selectByPrimaryKey_inputParameters">
+        <wsdl:part name="selectByPrimaryKey_inputParameters" element="top:ScreeningPrimaryKey"/>
+    </wsdl:message>
+    <wsdl:message name="ScreeningCollection_msg">
+        <wsdl:part name="ScreeningCollection" element="top:ScreeningCollection"/>
+    </wsdl:message>
+    <wsdl:portType name="SelectScreeningDatabase_ptt">
+        <wsdl:operation name="selectByPrimaryKey">
+            <wsdl:input message="tns:selectByPrimaryKey_inputParameters"/>
+            <wsdl:output message="tns:ScreeningCollection_msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

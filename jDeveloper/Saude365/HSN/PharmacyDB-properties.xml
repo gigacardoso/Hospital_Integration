@@ -1,0 +1,40 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+   <entry key="PHARMACY.STOCK_LINE:db_column_precision">0</entry>
+   <entry key="root_descriptor_alias">PHARMACY</entry>
+   <entry key="PHARMACY.SUBSTANCE:db_column_size">255</entry>
+   <entry key="PHARMACY.DOSAGE:db_column_not_null">true</entry>
+   <entry key="PHARMACY.STOCK:db_column_not_null">true</entry>
+   <entry key="PHARMACY.DOSAGE:db_column_type">VARCHAR2</entry>
+   <entry key="PHARMACY.ORDER_INPLACE:db_column_not_null">false</entry>
+   <entry key="PHARMACY.STOCK_LINE:db_column_type">NUMBER</entry>
+   <entry key="PHARMACY.ORDER_SIZE:db_column_type">NUMBER</entry>
+   <entry key="PHARMACY.PRICE:db_column_type">NUMBER</entry>
+   <entry key="PHARMACY.ORDER_INPLACE:db_column_type">VARCHAR2</entry>
+   <entry key="PHARMACY.DOSAGE:db_column_size">255</entry>
+   <entry key="PHARMACY.PRICE:db_column_scale">2</entry>
+   <entry key="PHARMACY.PRICE:db_column_precision">4</entry>
+   <entry key="PHARMACY.ORDER_SIZE:db_column_not_null">true</entry>
+   <entry key="PHARMACY.ORDER_INPLACE:db_column_size">5</entry>
+   <entry key="PHARMACY.ORDER_SIZE:db_column_precision">0</entry>
+   <entry key="PHARMACY.STOCK:db_column_type">NUMBER</entry>
+   <entry key="return_single_result_set">false</entry>
+   <entry key="PHARMACY.STOCK_LINE:db_column_not_null">true</entry>
+   <entry key="PHARMACY.DRUGNAME:db_column_type">VARCHAR2</entry>
+   <entry key="PHARMACY:db_column_7">ORDER_INPLACE</entry>
+   <entry key="PHARMACY:db_column_6">PRICE</entry>
+   <entry key="PHARMACY:db_column_5">ORDER_SIZE</entry>
+   <entry key="PHARMACY:db_column_4">STOCK_LINE</entry>
+   <entry key="PHARMACY:db_column_3">STOCK</entry>
+   <entry key="PHARMACY:db_column_2">SUBSTANCE</entry>
+   <entry key="PHARMACY:db_column_1">DOSAGE</entry>
+   <entry key="PHARMACY:db_column_0">DRUGNAME</entry>
+   <entry key="PHARMACY.STOCK:db_column_precision">0</entry>
+   <entry key="PHARMACY.PRICE:db_column_not_null">true</entry>
+   <entry key="PHARMACY.DRUGNAME:db_column_size">255</entry>
+   <entry key="PHARMACY:db_table_type">TABLE</entry>
+   <entry key="PHARMACY.SUBSTANCE:db_column_type">VARCHAR2</entry>
+   <entry key="PHARMACY.DRUGNAME:db_column_not_null">true</entry>
+   <entry key="PHARMACY.SUBSTANCE:db_column_not_null">true</entry>
+</properties>

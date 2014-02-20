@@ -1,0 +1,14 @@
+<adapter-config name="UploadFTPAdapter" adapter="FTP Adapter" wsdlLocation="UploadFTPAdapter.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/Ftp/Saphety"/>
+  <endpoint-interaction portType="Put_ptt" operation="Put">
+    <interaction-spec className="oracle.tip.adapter.ftp.outbound.FTPInteractionSpec">
+      <property name="PhysicalDirectory" value="OUT"/>
+      <property name="FileType" value="ascii"/>
+      <property name="Append" value="false"/>
+      <property name="FileNamingConvention" value="IST02.xml"/>
+      <property name="NumberMessages" value="1"/>
+    </interaction-spec>
+  </endpoint-interaction>
+
+</adapter-config>

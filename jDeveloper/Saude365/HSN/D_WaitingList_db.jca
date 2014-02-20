@@ -1,0 +1,25 @@
+<adapter-config name="D_WaitingList" adapter="Database Adapter" wsdlLocation="D_WaitingList.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/mydb" UIConnectionName="mydb" adapterRef=""/>
+  <endpoint-interaction portType="D_WaitingList_ptt" operation="delete">
+    <interaction-spec className="oracle.tip.adapter.db.DBWriteInteractionSpec">
+      <property name="DescriptorName" value="D_WaitingList.Drugwaitinglist"/>
+      <property name="DmlType" value="delete"/>
+      <property name="DetectOmissions" value="true"/>
+      <property name="OptimizeMerge" value="true"/>
+      <property name="MappingsMetaDataURL" value="D_WaitingList-or-mappings.xml"/>
+      <property name="GetActiveUnitOfWork" value="false"/>
+    </interaction-spec>
+  </endpoint-interaction>
+
+  <endpoint-interaction portType="D_WaitingList_ptt" operation="D_WaitingListSelect">
+    <interaction-spec className="oracle.tip.adapter.db.DBReadInteractionSpec">
+      <property name="DescriptorName" value="D_WaitingList.Drugwaitinglist"/>
+      <property name="QueryName" value="D_WaitingListSelect"/>
+      <property name="MappingsMetaDataURL" value="D_WaitingList-or-mappings.xml"/>
+      <property name="ReturnSingleResultSet" value="false"/>
+      <property name="GetActiveUnitOfWork" value="false"/>
+    </interaction-spec>
+  </endpoint-interaction>
+
+</adapter-config>

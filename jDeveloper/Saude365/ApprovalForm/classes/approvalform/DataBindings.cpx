@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Application xmlns="http://xmlns.oracle.com/adfm/application"
+             version="11.1.1.61.92" id="DataBindings" SeparateXMLFiles="false"
+             Package="approvalform" ClientType="Generic">
+  <pageMap>
+    <page path="/taskDetails1.jspx" usageId="approvalform_taskDetails1PageDef"/>
+  </pageMap>
+  <pageDefinitionUsages>
+    <page id="approvalform_taskDetails1PageDef"
+          path="approvalform.pageDefs.taskDetails1PageDef"/>
+  </pageDefinitionUsages>
+  <dataControlUsages>
+    <dc id="ApprovalForm_ApprovalRequest"
+        path="approvalform.ApprovalForm_ApprovalRequest"/>
+  </dataControlUsages>
+</Application>

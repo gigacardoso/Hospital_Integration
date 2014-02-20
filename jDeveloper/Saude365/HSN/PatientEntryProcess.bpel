@@ -1,0 +1,744 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Mon Mar 25 11:59:37 WET 2013
+  Author:  oracle
+  Type: BPEL 1.1 Process
+  Purpose: Synchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="PatientEntryProcess"
+               targetNamespace="http://xmlns.oracle.com/Saude365/HSN/PatientEntryProcess"
+               xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+               xmlns:client="http://xmlns.oracle.com/Saude365/HSN/PatientEntryProcess"
+               xmlns:ora="http://schemas.oracle.com/xpath/extension"
+               xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+         xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+         xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/file/Saude365/HSN/PatientEntry"
+         xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/SelectScreeningDatabase"
+         xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20"
+         xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath"
+         xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath"
+         xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/db/top/SelectScreeningDatabase"
+         xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions"
+         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk"
+         xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions"
+         xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap"
+         xmlns:ns4="http://saude365.pt"
+         xmlns:ns5="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/CareUnitsDatabase"
+         xmlns:ns6="http://xmlns.oracle.com/pcbpel/adapter/db/top/CareUnitsDatabase"
+         xmlns:ns7="http://xmlns.oracle.com/pcbpel/adapter/file/Saude365/HSN/ValidatePatientData"
+         xmlns:ns8="http://xmlns.oracle.com/pcbpel/adapter/file/Saude365/HSN/WritePatientExitReport"
+         xmlns:ns9="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/PatientCheck"
+         xmlns:ns10="http://xmlns.oracle.com/pcbpel/adapter/db/top/PatientCheck"
+         xmlns:ns11="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/RegistryDatabase"
+         xmlns:ns12="http://exitsaude365.pt"
+         xmlns:ns13="http://schemas.oracle.com/events/edl/BackOffice"
+         xmlns:ns14="http://xmlns.oracle.com/bpel/workflow/taskService"
+         xmlns:task="http://xmlns.oracle.com/bpel/workflow/task"
+         xmlns:wfcommon="http://xmlns.oracle.com/bpel/workflow/common"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:wf="http://schemas.oracle.com/bpel/extensions/workflow"
+         xmlns:ns15="http://xmlns.oracle.com/bpel/workflow/TaskEvidenceService"
+         xmlns:ns16="http://xmlns.oracle.com/bpel/workflow/routingSlip"
+         xmlns:ns17="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/DrugDB"
+         xmlns:ns18="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/DBPharmacy"
+         xmlns:ns19="http://xmlns.oracle.com/pcbpel/adapter/db/top/DBPharmacy"
+         xmlns:ns20="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/DrugWaitingListDB"
+         xmlns:ns21="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/CareUnitDatabase"
+         xmlns:ns22="http://xmlns.oracle.com/pcbpel/adapter/db/top/CareUnitDatabase"
+         xmlns:ns23="http://xmlns.oracle.com/pcbpel/adapter/file/Saude365/HSN/BackOfficeStarter"
+         xmlns:ns24="http://patientnotification/"
+         xmlns:ns25="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/MergeScreening"
+         xmlns:ns26="http://xmlns.oracle.com/pcbpel/adapter/db/top/MergeScreening">
+
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    --> 
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="PatientEntry" partnerLinkType="ns1:Read_plt"
+                 myRole="Read_role"/>
+    <partnerLink name="SelectScreeningDatabase"
+                 partnerLinkType="ns2:SelectScreeningDatabase_plt"
+                 partnerRole="SelectScreeningDatabase_role"/>
+    <partnerLink name="ValidatePatientData" partnerLinkType="ns7:Write_plt"
+                 partnerRole="Write_role"/>
+    <partnerLink name="PatientCheck" partnerLinkType="ns9:PatientCheck_plt"
+                 partnerRole="PatientCheck_role"/>
+    <partnerLink name="RegistryDatabase"
+                 partnerLinkType="ns11:RegistryDatabase_plt"
+                 partnerRole="RegistryDatabase_role"/>
+    <partnerLink name="ExitReview.TaskService_1"
+                 partnerLinkType="ns14:TaskService" partnerRole="TaskService"
+                 myRole="TaskServiceCallbackListener"/>
+    <partnerLink name="DBPharmacy" partnerLinkType="ns18:DBPharmacy_plt"
+                 partnerRole="DBPharmacy_role"/>
+    <partnerLink name="DrugWaitingListDB"
+                 partnerLinkType="ns20:DrugWaitingListDB_plt"
+                 partnerRole="DrugWaitingListDB_role"/>
+    <partnerLink name="CareUnitDatabase"
+                 partnerLinkType="ns21:CareUnitDatabase_plt"
+                 partnerRole="CareUnitDatabase_role"/>
+    <partnerLink name="BackOfficeStarter" partnerLinkType="ns23:Write_plt"
+                 partnerRole="Write_role"/>
+    <partnerLink name="SendSMS" partnerLinkType="ns24:PatientNotification_PL"
+                 partnerRole="PatientNotification_Role"/>
+    <partnerLink name="MergeScreening" partnerLinkType="ns25:MergeScreening_plt"
+                 partnerRole="MergeScreening_role"/>
+    <partnerLink name="WritePatientExitReport" partnerLinkType="ns8:Write_plt"
+                 partnerRole="Write_role"/>
+  </partnerLinks>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="inputVariable" messageType="ns1:Read_msg"/>
+
+    <!-- Reference to the message that will be returned to the requester-->
+    <variable name="outputVariable" messageType="ns8:Write_msg"/>
+    <variable name="PatientScreeningInput"
+              messageType="ns2:selectByPrimaryKey_inputParameters"/>
+    <variable name="PatientScreening"
+              messageType="ns2:ScreeningCollection_msg"/>
+    <variable name="CareType"
+              messageType="ns21:selectByPrimaryKey_inputParameters"/>
+    <variable name="CareUnitUse" messageType="ns21:CareunitsCollection_msg"/>
+    <variable name="PatientDataToValidate" messageType="ns7:Write_msg"/>
+    <variable name="PatientPK"
+              messageType="ns9:selectByPrimaryKey_inputParameters"/>
+    <variable name="Patient" messageType="ns9:PatientCollection_msg"/>
+    <variable name="RegisterUse" messageType="ns11:RegistryCollection_msg"/>
+    <variable name="Review" type="xsd:string"/>
+    <variable name="ExitReview1_globalVariable" messageType="ns14:taskMessage"/>
+    <variable name="ExitReview3_globalVariable" messageType="ns14:taskMessage"/>
+    <variable name="DrugCounter" type="xsd:int"/>
+    <variable name="DrugPK"
+              messageType="ns18:selectByPrimaryKey_inputParameters"/>
+    <variable name="DrugOutput" messageType="ns18:PharmacyCollection_msg"/>
+    <variable name="DrugInput" messageType="ns18:PharmacyCollection_msg"/>
+    <variable name="WaitingListInput"
+              messageType="ns20:DrugwaitinglistCollection_msg"/>
+    <variable name="BOstart" messageType="ns23:Write_msg"/>
+    <variable name="SMSInput" messageType="ns24:notifyPatientInput"/>
+    <variable name="SMSOutput" messageType="ns24:notifyPatientOutput"/>
+    <variable name="PatientScreeningValid"
+              messageType="ns25:ScreeningCollection_msg"/>
+  </variables>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <!-- Receive input from requestor. (Note: This maps to operation defined in PatientEntryProcess.wsdl) -->
+    <receive name="receiveInput" variable="inputVariable" createInstance="yes"
+             partnerLink="PatientEntry" portType="ns1:Read_ptt"
+             operation="Read"/>
+    <assign name="TransformToPatientCheck">
+      <bpelx:annotation>
+        <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+        <from expression="ora:doXSLTransformForDoc('xsl/TransformationToPatientPK.xsl', $inputVariable.body)"/>
+        <to variable="PatientPK" part="selectByPrimaryKey_inputParameters"/>
+      </copy>
+    </assign>
+    <invoke name="GetPatient" inputVariable="PatientPK"
+            outputVariable="Patient" partnerLink="PatientCheck"
+            portType="ns9:PatientCheck_ptt" operation="selectByPrimaryKey"
+            bpelx:invokeAsDetail="no"/>
+    <switch name="PatientExistsWithValidAddress">
+      <case condition="bpws:getVariableData('Patient','PatientCollection','/ns10:PatientCollection/ns10:Patient/ns10:addressValid') = 'INVALIDO!'">
+        <bpelx:annotation>
+          <bpelx:general>
+            <bpelx:property name="userLabel">Address Invalid</bpelx:property>
+          </bpelx:general>
+        </bpelx:annotation>
+        <sequence name="Sequence5">
+          <assign name="TransformToPatient">
+            <bpelx:annotation>
+              <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+              <from expression="ora:doXSLTransformForDoc('xsl/TransformationToPatient.xsl', $inputVariable.body)"/>
+              <to variable="Patient" part="PatientCollection"/>
+            </copy>
+          </assign>
+          <invoke name="CorrectAddress" inputVariable="Patient"
+                  partnerLink="PatientCheck" portType="ns9:PatientCheck_ptt"
+                  operation="merge" bpelx:invokeAsDetail="no"/>
+        </sequence>
+      </case>
+      <case condition="bpws:getVariableData('Patient','PatientCollection','/ns10:PatientCollection/ns10:Patient/ns10:addressValid') = 'VALIDO!'">
+        <bpelx:annotation>
+          <bpelx:general>
+            <bpelx:property name="userLabel">Address valid</bpelx:property>
+          </bpelx:general>
+        </bpelx:annotation>
+        <sequence>
+          <empty name="nothing"/>
+        </sequence>
+      </case>
+      <otherwise>
+        <sequence>
+          <assign name="TransformCreatePatient">
+            <bpelx:annotation>
+              <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+              <from expression="ora:doXSLTransformForDoc('xsl/TransformationToDataToVaidate.xsl', $inputVariable.body)"/>
+              <to variable="PatientDataToValidate" part="body"/>
+            </copy>
+          </assign>
+          <invoke name="CreatePatient"
+                  inputVariable="PatientDataToValidate"
+                  partnerLink="ValidatePatientData" portType="ns7:Write_ptt"
+                  operation="Write" bpelx:invokeAsDetail="no"/>
+          <terminate name="Terminate"/>
+        </sequence>
+      </otherwise>
+    </switch>
+    <assign name="TransformtoScreeningPK">
+      <bpelx:annotation>
+        <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+        <from expression="ora:doXSLTransformForDoc('xsl/TransformationToScreeningInput.xsl', $inputVariable.body)"/>
+        <to variable="PatientScreeningInput"
+            part="selectByPrimaryKey_inputParameters"/>
+      </copy>
+    </assign>
+    <invoke name="GetScreening"
+            inputVariable="PatientScreeningInput"
+            outputVariable="PatientScreening"
+            partnerLink="SelectScreeningDatabase"
+            portType="ns2:SelectScreeningDatabase_ptt"
+            operation="selectByPrimaryKey" bpelx:invokeAsDetail="no"/>
+    <switch name="Switch2">
+      <case condition="bpws:getVariableData('PatientScreening','ScreeningCollection','/ns3:ScreeningCollection/ns3:Screening/ns3:screeningValid') = 'INVALIDO!' ">
+        <bpelx:annotation>
+          <bpelx:general>
+            <bpelx:property name="userLabel">Invalid</bpelx:property>
+          </bpelx:general>
+        </bpelx:annotation><sequence name="Sequence1"
+                                     xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/">
+      <assign name="TransformToCareScreening">
+         <bpelx:annotation xmlns:bpelx="http://schemas.oracle.com/bpel/extension">
+            <bpelx:pattern>transformation</bpelx:pattern>
+         </bpelx:annotation>
+         <copy>
+            <from expression="ora:doXSLTransformForDoc('xsl/TransformationToCareScreening.xsl', $inputVariable.body)"/>
+            <to variable="CareType" part="selectByPrimaryKey_inputParameters"/>
+         </copy>
+      </assign>
+      <invoke name="GetScreeningUse" inputVariable="CareType"
+              outputVariable="CareUnitUse" partnerLink="CareUnitDatabase"
+              portType="ns21:CareUnitDatabase_ptt"
+              operation="selectByPrimaryKey"
+              xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+              bpelx:invokeAsDetail="no"/>
+      <switch name="WaitForFreeUnit">
+         <case condition="bpws:getVariableData('CareUnitUse','CareunitsCollection','/ns22:CareunitsCollection/ns22:Careunits/ns22:use') &lt; bpws:getVariableData('CareUnitUse','CareunitsCollection','/ns22:CareunitsCollection/ns22:Careunits/ns22:limit') and bpws:getVariableData('CareUnitUse','CareunitsCollection','/ns22:CareunitsCollection/ns22:Careunits/ns22:state') = 'normal' ">
+            <bpelx:annotation xmlns:bpelx="http://schemas.oracle.com/bpel/extension">
+               <bpelx:general>
+                  <bpelx:property name="userLabel">Free Screening</bpelx:property>
+               </bpelx:general>
+            </bpelx:annotation>
+              <empty name="UseCareUnit"/>
+            </case>
+         <otherwise>
+              <sequence name="Sequence10">
+                <while name="WaitForFreeUnit"
+                       condition="bpws:getVariableData('CareUnitUse','CareunitsCollection','/ns22:CareunitsCollection/ns22:Careunits/ns22:state')  != 'normal' or  bpws:getVariableData('CareUnitUse','CareunitsCollection','/ns22:CareunitsCollection/ns22:Careunits/ns22:use') >= bpws:getVariableData('CareUnitUse','CareunitsCollection','/ns22:CareunitsCollection/ns22:Careunits/ns22:limit')"><sequence name="Sequence14"><wait name="Wait1min"
+                                                                                                                                                                                                                                                                           for="'PT1M'"
+                                                                                                                                                                                                                                                                           xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/"/><invoke name="GetScreeningUse"
+                                                                                                                                                                                                                                                                                                                                                    inputVariable="CareType"
+                                                                                                                                                                                                                                                                                                                                                    outputVariable="CareUnitUse"
+                                                                                                                                                                                                                                                                                                                                                    partnerLink="CareUnitDatabase"
+                                                                                                                                                                                                                                                                                                                                                    portType="ns21:CareUnitDatabase_ptt"
+                                                                                                                                                                                                                                                                                                                                                    operation="selectByPrimaryKey"
+                                                                                                                                                                                                                                                                                                                                                    xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+                                                                                                                                                                                                                                                                                                                                                    bpelx:invokeAsDetail="no"
+                                                                                                                                                                                                                                                                                                                                                    xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/"/></sequence></while><switch name="SendSMS"
+                                                                                                                                                                                                                                                         xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/">
+      <case condition="bpws:getVariableData('PatientScreening','ScreeningCollection','/ns3:ScreeningCollection/ns3:Screening/ns3:importance') = 'verde'">
+         <bpelx:annotation xmlns:bpelx="http://schemas.oracle.com/bpel/extension">
+            <bpelx:general>
+               <bpelx:property name="userLabel">Urgencia = Verde</bpelx:property>
+            </bpelx:general>
+         </bpelx:annotation>
+         <sequence name="Sequence12">
+            <sequence name="Sequence11">
+               <assign name="TransformToSMSInput">
+                  <bpelx:annotation xmlns:bpelx="http://schemas.oracle.com/bpel/extension">
+                     <bpelx:pattern>transformation</bpelx:pattern>
+                  </bpelx:annotation>
+                  <copy>
+                     <from expression="ora:doXSLTransformForDoc('xsl/TransformationToWaitingSMS.xsl', $inputVariable.body)"/>
+                     <to variable="SMSInput" part="parameters"/>
+                  </copy>
+               </assign>
+               <invoke name="SendSmsWaitingTime" inputVariable="SMSInput"
+                       outputVariable="SMSOutput" partnerLink="SendSMS"
+                       portType="ns24:PatientNotification"
+                       operation="notifyPatient" bpelx:invokeAsDetail="no"
+                       xmlns:bpelx="http://schemas.oracle.com/bpel/extension"/>
+            </sequence>
+         </sequence>
+      </case>
+      <otherwise/>
+   </switch></sequence>
+            </otherwise>
+      </switch>
+          <sequence name="Sequence2">
+            <assign name="IncrementUse">
+              <copy>
+                <from expression="bpws:getVariableData('CareUnitUse','CareunitsCollection','/ns22:CareunitsCollection/ns22:Careunits/ns22:use') + 1"/>
+                <to variable="CareUnitUse" part="CareunitsCollection"
+                    query="/ns22:CareunitsCollection/ns22:Careunits/ns22:use"/>
+              </copy>
+            </assign>
+            <invoke name="InsertDB" inputVariable="CareUnitUse"
+                    partnerLink="CareUnitDatabase"
+                    portType="ns21:CareUnitDatabase_ptt" operation="merge"
+                    xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+                    bpelx:invokeAsDetail="no"/>
+            <empty name="PatientBeingAssisted"/>
+            <assign name="MakeRegist"
+                    xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/">
+              <bpelx:annotation xmlns:bpelx="http://schemas.oracle.com/bpel/extension">
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:doXSLTransformForDoc('xsl/TransformationToRegist.xsl', $CareUnitUse.CareunitsCollection, 'inputVariable.body', $inputVariable.body)"/>
+                <to variable="RegisterUse" part="RegistryCollection"/>
+              </copy>
+            </assign>
+            <invoke name="RegisterUse" inputVariable="RegisterUse"
+                    partnerLink="RegistryDatabase"
+                    portType="ns11:RegistryDatabase_ptt" operation="merge"
+                    bpelx:invokeAsDetail="no"
+                    xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+                    xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/"/>
+            <assign name="TransformToValid">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:doXSLTransformForDoc('xsl/TransformationToScreeningvalid1.xsl', $PatientScreening.ScreeningCollection)"/>
+                <to variable="PatientScreeningValid"
+                    part="ScreeningCollection"/>
+              </copy>
+            </assign>
+            <invoke name="ValidateScreening"
+                    inputVariable="PatientScreeningValid"
+                    partnerLink="MergeScreening"
+                    portType="ns25:MergeScreening_ptt" operation="merge"
+                    bpelx:invokeAsDetail="no"/>
+            <assign name="decrementUse"
+                    xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/">
+              <copy>
+                <from expression="bpws:getVariableData('CareUnitUse', 'CareunitsCollection','/ns22:CareunitsCollection/ns22:Careunits/ns22:use') - 1"/>
+                <to variable="CareUnitUse" part="CareunitsCollection"
+                    query="/ns22:CareunitsCollection/ns22:Careunits/ns22:use"/>
+              </copy>
+            </assign>
+            <invoke name="InsertDB" inputVariable="CareUnitUse"
+                    partnerLink="CareUnitDatabase"
+                    portType="ns21:CareUnitDatabase_ptt" operation="merge"
+                    xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+                    xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+                    bpelx:invokeAsDetail="no"/>
+          </sequence>
+        </sequence></case>
+      <case condition="bpws:getVariableData('PatientScreening','ScreeningCollection','/ns3:ScreeningCollection/ns3:Screening/ns3:screeningValid') = 'VALIDO!' ">
+        <bpelx:annotation>
+          <bpelx:general>
+            <bpelx:property name="userLabel">Valid</bpelx:property>
+          </bpelx:general>
+        </bpelx:annotation>
+        <sequence name="Sequence1">
+          <assign name="TransformToCareUnit">
+            <bpelx:annotation>
+              <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+              <from expression="ora:doXSLTransformForDoc('xsl/TransformationToCareType.xsl', $inputVariable.body)"/>
+              <to variable="CareType"
+                  part="selectByPrimaryKey_inputParameters"/>
+            </copy>
+          </assign>
+          <invoke name="GetCareUnitUse" inputVariable="CareType"
+                  outputVariable="CareUnitUse" partnerLink="CareUnitDatabase"
+                  portType="ns21:CareUnitDatabase_ptt"
+                  operation="selectByPrimaryKey" bpelx:invokeAsDetail="no"/>
+          <switch name="WaitFreeUnt">
+            <case condition="bpws:getVariableData('CareUnitUse','CareunitsCollection','/ns22:CareunitsCollection/ns22:Careunits/ns22:state') = 'normal' and bpws:getVariableData('CareUnitUse','CareunitsCollection','/ns22:CareunitsCollection/ns22:Careunits/ns22:use') &lt; bpws:getVariableData('CareUnitUse','CareunitsCollection','/ns22:CareunitsCollection/ns22:Careunits/ns22:limit')">
+              <bpelx:annotation>
+                <bpelx:general>
+                  <bpelx:property name="userLabel">Free CareUnit</bpelx:property>
+                </bpelx:general>
+              </bpelx:annotation>
+              <empty name="UseCareUnit"/>
+            </case>
+            <otherwise>
+              <sequence name="Sequence6">
+                <while name="While2"
+                       condition="bpws:getVariableData('CareUnitUse','CareunitsCollection','/ns22:CareunitsCollection/ns22:Careunits/ns22:state')  != 'normal' or bpws:getVariableData('CareUnitUse','CareunitsCollection','/ns22:CareunitsCollection/ns22:Careunits/ns22:use') >= bpws:getVariableData('CareUnitUse','CareunitsCollection','/ns22:CareunitsCollection/ns22:Careunits/ns22:limit')">
+                  <sequence name="Sequence13">
+                    <wait name="Wait1min" for="'PT1M'"/>
+                    <invoke name="GetCareUnitUse" inputVariable="CareType"
+                            outputVariable="CareUnitUse"
+                            partnerLink="CareUnitDatabase"
+                            portType="ns21:CareUnitDatabase_ptt"
+                            operation="selectByPrimaryKey"
+                            bpelx:invokeAsDetail="no"
+                            xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+                            xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/"/>
+                  </sequence>
+                </while>
+                <switch name="SendSMS">
+                  <case condition="bpws:getVariableData('PatientScreening','ScreeningCollection','/ns3:ScreeningCollection/ns3:Screening/ns3:importance') = 'verde'">
+                    <bpelx:annotation>
+                      <bpelx:general>
+                        <bpelx:property name="userLabel">Urgencia = Verde</bpelx:property>
+                      </bpelx:general>
+                    </bpelx:annotation>
+                    <sequence name="Sequence12">
+                      <sequence name="Sequence11">
+                        <assign name="TransformToSMSInput">
+                          <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                          </bpelx:annotation>
+                          <copy>
+                            <from expression="ora:doXSLTransformForDoc('xsl/TransformationToWaitingSMS.xsl', $inputVariable.body)"/>
+                            <to variable="SMSInput" part="parameters"/>
+                          </copy>
+                        </assign>
+                        <invoke name="SendSmsWaitingTime"
+                                inputVariable="SMSInput"
+                                outputVariable="SMSOutput" partnerLink="SendSMS"
+                                portType="ns24:PatientNotification"
+                                operation="notifyPatient"
+                                bpelx:invokeAsDetail="no"/>
+                      </sequence>
+                    </sequence>
+                  </case>
+                  <otherwise/>
+                </switch>
+              </sequence>
+            </otherwise>
+          </switch>
+          <sequence name="Sequence2">
+            <assign name="IncrementUse">
+              <copy>
+                <from expression="bpws:getVariableData('CareUnitUse','CareunitsCollection','/ns22:CareunitsCollection/ns22:Careunits/ns22:use') + 1"/>
+                <to variable="CareUnitUse" part="CareunitsCollection"
+                    query="/ns22:CareunitsCollection/ns22:Careunits/ns22:use"/>
+              </copy>
+            </assign>
+            <invoke name="InsertDB" inputVariable="CareUnitUse"
+                    partnerLink="CareUnitDatabase"
+                    portType="ns21:CareUnitDatabase_ptt" operation="merge"
+                    bpelx:invokeAsDetail="no"/>
+            <flow name="DecrementDrugs">
+              <sequence name="Sequence">
+                <assign name="InitializeCounter">
+                  <copy>
+                    <from expression="1"/>
+                    <to variable="DrugCounter"/>
+                  </copy>
+                </assign>
+                <while name="ForEveryDrug"
+                       condition="ora:countNodes('inputVariable','body','/ns4:relatorio/ns4:triagem/ns4:medicamento') >= bpws:getVariableData('DrugCounter')">
+                  <sequence>
+                    <assign name="DrugPropertiesToDrugPK">
+                      <copy>
+                        <from expression="bpws:getVariableData('inputVariable','body',concat('/ns4:relatorio/ns4:triagem/ns4:medicamento[',bpws:getVariableData('DrugCounter'),']/ns4:nome'))"/>
+                        <to variable="DrugPK"
+                            part="selectByPrimaryKey_inputParameters"
+                            query="/ns19:PharmacyPrimaryKey/ns19:drugname"/>
+                      </copy>
+                      <copy>
+                        <from expression="bpws:getVariableData('inputVariable','body',concat('/ns4:relatorio/ns4:triagem/ns4:medicamento[',bpws:getVariableData('DrugCounter'),']/ns4:dose'))"/>
+                        <to variable="DrugPK"
+                            part="selectByPrimaryKey_inputParameters"
+                            query="/ns19:PharmacyPrimaryKey/ns19:dosage"/>
+                      </copy>
+                      <copy>
+                        <from expression="bpws:getVariableData('inputVariable','body',concat('/ns4:relatorio/ns4:triagem/ns4:medicamento[',bpws:getVariableData('DrugCounter'),']/ns4:substancia'))"/>
+                        <to variable="DrugPK"
+                            part="selectByPrimaryKey_inputParameters"
+                            query="/ns19:PharmacyPrimaryKey/ns19:substance"/>
+                      </copy>
+                    </assign>
+                    <invoke name="GetDrug" inputVariable="DrugPK"
+                            outputVariable="DrugOutput" partnerLink="DBPharmacy"
+                            portType="ns18:DBPharmacy_ptt"
+                            operation="selectByPrimaryKey"
+                            bpelx:invokeAsDetail="no"/>
+                    <switch name="Switch4">
+                      <case condition="bpws:getVariableData('DrugOutput','PharmacyCollection','/ns19:PharmacyCollection/ns19:Pharmacy/ns19:drugname') = bpws:getVariableData('DrugPK','selectByPrimaryKey_inputParameters','/ns19:PharmacyPrimaryKey/ns19:drugname')">
+                        <bpelx:annotation>
+                          <bpelx:general>
+                            <bpelx:property name="userLabel">DrugExists</bpelx:property>
+                          </bpelx:general>
+                        </bpelx:annotation>
+                        <switch name="Switch5">
+                          <case condition="bpws:getVariableData('DrugOutput','PharmacyCollection','/ns19:PharmacyCollection/ns19:Pharmacy/ns19:stock') > 0">
+                            <bpelx:annotation>
+                              <bpelx:general>
+                                <bpelx:property name="userLabel">DrugAvailable</bpelx:property>
+                              </bpelx:general>
+                            </bpelx:annotation>
+                            <sequence name="Sequence8">
+                              <assign name="DecrementStock">
+                                <bpelx:annotation>
+                                  <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                  <from expression="ora:doXSLTransformForDoc('xsl/TransformationToMinusStockDrug.xsl', $DrugOutput.PharmacyCollection)"/>
+                                  <to variable="DrugInput"
+                                      part="PharmacyCollection"/>
+                                </copy>
+                              </assign>
+                              <invoke name="DecrementStock"
+                                      inputVariable="DrugInput"
+                                      partnerLink="DBPharmacy"
+                                      portType="ns18:DBPharmacy_ptt"
+                                      operation="merge"
+                                      bpelx:invokeAsDetail="no"/>
+                            </sequence>
+                          </case>
+                          <otherwise>
+                            <sequence name="Sequence9">
+                              <assign name="TransformToWaitingList">
+                                <bpelx:annotation>
+                                  <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                  <from expression="ora:doXSLTransformForDoc('xsl/TransformationToWaitingList.xsl', $PatientScreening.ScreeningCollection, 'DrugPK.selectByPrimaryKey_inputParameters', $DrugPK.selectByPrimaryKey_inputParameters)"/>
+                                  <to variable="WaitingListInput"
+                                      part="DrugwaitinglistCollection"/>
+                                </copy>
+                              </assign>
+                              <invoke name="PutPatientWaitingList"
+                                      inputVariable="WaitingListInput"
+                                      partnerLink="DrugWaitingListDB"
+                                      portType="ns20:DrugWaitingListDB_ptt"
+                                      operation="merge"
+                                      bpelx:invokeAsDetail="no"/>
+                            </sequence>
+                          </otherwise>
+                        </switch>
+                      </case>
+                      <otherwise>
+                        <sequence name="Sequence7">
+                          <assign name="TransformPharmacyDrug">
+                            <bpelx:annotation>
+                              <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                              <from expression="ora:doXSLTransformForDoc('xsl/TransformationToPharmacyDrug.xsl', $DrugPK.selectByPrimaryKey_inputParameters)"/>
+                              <to variable="DrugInput"
+                                  part="PharmacyCollection"/>
+                            </copy>
+                          </assign>
+                          <invoke name="InsertInPharmacy"
+                                  inputVariable="DrugInput"
+                                  partnerLink="DBPharmacy"
+                                  portType="ns18:DBPharmacy_ptt"
+                                  operation="merge" bpelx:invokeAsDetail="no"/>
+                          <assign name="TransformToWaitingList"
+                                  xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/">
+      <bpelx:annotation xmlns:bpelx="http://schemas.oracle.com/bpel/extension">
+         <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+         <from expression="ora:doXSLTransformForDoc('xsl/TransformationToWaitingList.xsl', $PatientScreening.ScreeningCollection, 'DrugPK.selectByPrimaryKey_inputParameters', $DrugPK.selectByPrimaryKey_inputParameters)"/>
+         <to variable="WaitingListInput" part="DrugwaitinglistCollection"/>
+      </copy>
+   </assign>
+                          <invoke name="PutPatientWaitingList"
+                                  inputVariable="WaitingListInput"
+                                  partnerLink="DrugWaitingListDB"
+                                  portType="ns20:DrugWaitingListDB_ptt"
+                                  operation="merge" bpelx:invokeAsDetail="no"
+                                  xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+                                  xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/"/>
+                        </sequence>
+                      </otherwise>
+                    </switch>
+                    <assign name="Increment">
+                      <copy>
+                        <from expression="bpws:getVariableData('DrugCounter') + 1"/>
+                        <to variable="DrugCounter"/>
+                      </copy>
+                    </assign>
+                  </sequence>
+                </while>
+              </sequence>
+            </flow><invoke name="StartBO" inputVariable="BOstart"
+                           partnerLink="BackOfficeStarter"
+                           portType="ns23:Write_ptt" operation="Write"
+                           bpelx:invokeAsDetail="no"
+                           xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+                           xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/"/><empty name="PatientBeingAssisted"/>
+            <assign name="MakeRegist">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:doXSLTransformForDoc('xsl/TransformationToRegist.xsl', $CareUnitUse.CareunitsCollection, 'inputVariable.body', $inputVariable.body)"/>
+                <to variable="RegisterUse" part="RegistryCollection"/>
+              </copy>
+            </assign>
+            <invoke name="RegisterUse" inputVariable="RegisterUse"
+                    partnerLink="RegistryDatabase"
+                    portType="ns11:RegistryDatabase_ptt" operation="merge"
+                    bpelx:invokeAsDetail="no"/>
+            <assign name="decrementUse"
+                    xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/">
+              <copy>
+                <from expression="bpws:getVariableData('CareUnitUse','CareunitsCollection','/ns22:CareunitsCollection/ns22:Careunits/ns22:use') - 1"/>
+                <to variable="CareUnitUse" part="CareunitsCollection"
+                    query="/ns22:CareunitsCollection/ns22:Careunits/ns22:use"/>
+              </copy>
+            </assign>
+            <invoke name="InsertDB" inputVariable="CareUnitUse"
+                    partnerLink="CareUnitDatabase"
+                    portType="ns21:CareUnitDatabase_ptt" operation="merge"
+                    xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+                    xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+                    bpelx:invokeAsDetail="no"/>
+          </sequence>
+        </sequence>
+      </case>
+      <otherwise><sequence xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/">
+      <assign name="TransformToValidatePatient">
+         <bpelx:annotation xmlns:bpelx="http://schemas.oracle.com/bpel/extension">
+            <bpelx:pattern>transformation</bpelx:pattern>
+         </bpelx:annotation>
+         <copy>
+            <from expression="ora:doXSLTransformForDoc('xsl/TransformationToDataToVaidate.xsl', $inputVariable.body)"/>
+            <to variable="PatientDataToValidate" part="body"/>
+         </copy>
+      </assign>
+      <invoke name="CreatePatient" inputVariable="PatientDataToValidate"
+              partnerLink="ValidatePatientData" portType="ns7:Write_ptt"
+              operation="Write" bpelx:invokeAsDetail="no"
+              xmlns:bpelx="http://schemas.oracle.com/bpel/extension"/>
+      <terminate name="Terminate"/>
+   </sequence></otherwise>
+    </switch>
+    <scope name="ExitReview3"
+           xmlns:wf="http://schemas.oracle.com/bpel/extensions/workflow"
+           wf:key="ExitReview1_globalVariable">
+      <bpelx:annotation>
+        <bpelx:pattern patternName="bpelx:workflow"></bpelx:pattern>
+      </bpelx:annotation>
+      <variables>
+        <variable name="initiateTaskInput"
+                  messageType="ns14:initiateTaskMessage"/>
+        <variable name="initiateTaskResponseMessage"
+                  messageType="ns14:initiateTaskResponseMessage"/>
+      </variables>
+      <sequence>
+        <assign name="ExitReview3_AssignTaskAttributes">
+          <copy>
+            <from expression="number(3)"/>
+            <to variable="initiateTaskInput" part="payload"
+                query="/ns14:initiateTask/task:task/task:priority"/>
+          </copy>
+          <copy>
+            <from><payload xmlns="http://xmlns.oracle.com/bpel/workflow/task">
+ <Review xmlns="http://xmlns.oracle.com/bpel/workflow/task"/>
+</payload></from>
+            <to variable="initiateTaskInput" part="payload"
+                query="/ns14:initiateTask/task:task/task:payload"/>
+          </copy>
+          <copy>
+            <from variable="Review"/>
+            <to variable="initiateTaskInput" part="payload"
+                query="/ns14:initiateTask/task:task/task:payload/task:Review"/>
+          </copy>
+          <copy>
+            <from expression="string('Exit Review')"/>
+            <to variable="initiateTaskInput" part="payload"
+                query="/ns14:initiateTask/task:task/task:title"/>
+          </copy>
+        </assign>
+        <invoke name="initiateTask_ExitReview3"
+                partnerLink="ExitReview.TaskService_1" operation="initiateTask"
+                portType="ns14:TaskService" inputVariable="initiateTaskInput"
+                outputVariable="initiateTaskResponseMessage"/>
+        <receive name="receiveCompletedTask_ExitReview3"
+                 partnerLink="ExitReview.TaskService_1"
+                 portType="ns14:TaskServiceCallback" operation="onTaskCompleted"
+                 variable="ExitReview1_globalVariable" createInstance="no"/>
+      </sequence>
+    </scope>
+    <switch name="taskSwitch">
+      <case condition="$ExitReview1_globalVariable.payload/task:systemAttributes/task:outcome = 'OK'">
+        <bpelx:annotation>
+          <bpelx:pattern>Task outcome is OK</bpelx:pattern>
+          <bpelx:general>
+            <bpelx:property name="userLabel">Task outcome is OK</bpelx:property>
+          </bpelx:general>
+        </bpelx:annotation>
+        <sequence>
+          <assign>
+            <copy>
+              <from variable="ExitReview1_globalVariable" part="payload"
+                    query="/task:task/task:payload/task:Review"/>
+              <to variable="Review"/>
+            </copy>
+          </assign>
+        </sequence>
+      </case>
+    </switch>
+    <assign name="TransformToExitReport">
+      <bpelx:annotation>
+        <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+        <from expression="ora:doXSLTransformForDoc('xsl/TransformationToExitReport.xsl', $inputVariable.body, 'CareType.selectByPrimaryKey_inputParameters', $CareType.selectByPrimaryKey_inputParameters)"/>
+        <to variable="outputVariable" part="body"/>
+      </copy>
+    </assign>
+    <assign name="AddReviewToExitReport">
+      <copy>
+        <from variable="Review"/>
+        <to variable="outputVariable" part="body"
+            query="/ns12:relatoriosaida/ns12:review"/>
+      </copy>
+    </assign>
+    <invoke name="WriteExitReport"
+            inputVariable="outputVariable"
+            partnerLink="WritePatientExitReport" portType="ns8:Write_ptt"
+            operation="Write" bpelx:invokeAsDetail="no"/>
+    <!-- Generate reply to synchronous request -->
+  </sequence>
+</process>

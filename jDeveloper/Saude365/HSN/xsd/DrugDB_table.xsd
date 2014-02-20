@@ -1,0 +1,50 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<xs:schema targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/DrugDB" xmlns="http://xmlns.oracle.com/pcbpel/adapter/db/top/DrugDB" elementFormDefault="qualified" attributeFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <xs:element name="DrugsCollection" type="DrugsCollection"/>
+   <xs:complexType name="DrugsCollection">
+      <xs:sequence>
+         <xs:element name="Drugs" type="Drugs" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="Drugs">
+      <xs:sequence>
+         <xs:element name="dateVisit" type="xs:dateTime"/>
+         <xs:element name="patientId">
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:maxLength value="255"/>
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="drugname">
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:maxLength value="255"/>
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="dosage" minOccurs="0">
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:maxLength value="255"/>
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="substance" minOccurs="0">
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:maxLength value="255"/>
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:element name="DrugsPrimaryKey" type="DrugsPrimaryKey"/>
+   <xs:complexType name="DrugsPrimaryKey">
+      <xs:sequence>
+         <xs:element name="dateVisit" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+         <xs:element name="drugname" type="xs:string" minOccurs="1" maxOccurs="1"/>
+         <xs:element name="patientId" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      </xs:sequence>
+   </xs:complexType>
+</xs:schema>

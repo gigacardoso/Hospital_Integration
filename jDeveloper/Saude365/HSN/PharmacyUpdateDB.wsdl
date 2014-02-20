@@ -1,0 +1,28 @@
+<?binding.jca PharmacyUpdateDB_db.jca?>
+<wsdl:definitions name="PharmacyUpdateDB" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/PharmacyUpdateDB" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/PharmacyUpdateDB" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/PharmacyUpdateDB">
+    <plt:partnerLinkType name="PharmacyUpdateDB_plt">
+        <plt:role name="PharmacyUpdateDB_role">
+            <plt:portType name="tns:PharmacyUpdateDB_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/PharmacyUpdateDB" schemaLocation="xsd/PharmacyUpdateDB_table.xsd"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="PharmacyCollection_msg">
+        <wsdl:part name="PharmacyCollection" element="top:PharmacyCollection"/>
+    </wsdl:message>
+    <wsdl:message name="selectByPrimaryKey_inputParameters">
+        <wsdl:part name="selectByPrimaryKey_inputParameters" element="top:PharmacyPrimaryKey"/>
+    </wsdl:message>
+    <wsdl:portType name="PharmacyUpdateDB_ptt">
+        <wsdl:operation name="merge">
+            <wsdl:input message="tns:PharmacyCollection_msg"/>
+        </wsdl:operation>
+        <wsdl:operation name="selectByPrimaryKey">
+            <wsdl:input message="tns:selectByPrimaryKey_inputParameters"/>
+            <wsdl:output message="tns:PharmacyCollection_msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

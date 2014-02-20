@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="OrderArrival" targetNamespace="http://xmlns.oracle.com/Saude365/HSN/OrderArrival" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:client="http://xmlns.oracle.com/Saude365/HSN/OrderArrival" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/file/Saude365/HSN/Order" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/D_WaitingList" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions" xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/db/top/D_WaitingList" xmlns:ns4="http://saude365.pt" xmlns:ns5="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/PatientsDB" xmlns:ns6="http://xmlns.oracle.com/pcbpel/adapter/db/top/PatientsDB" xmlns:ns7="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/PharmacyUpdateDB" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns8="http://xmlns.oracle.com/pcbpel/adapter/db/top/PharmacyUpdateDB" xmlns:ns9="http://patientnotification/" id="BpPrc0">
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  --> 
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="Order" partnerLinkType="ns1:Read_plt" myRole="Read_role"/>
+    <partnerLink name="D_WaitingList" partnerLinkType="ns2:D_WaitingList_plt" partnerRole="D_WaitingList_role"/>
+    <partnerLink name="PatientsDB" partnerLinkType="ns5:PatientsDB_plt" partnerRole="PatientsDB_role"/>
+    <partnerLink name="PharmacyUpdateDB" partnerLinkType="ns7:PharmacyUpdateDB_plt" partnerRole="PharmacyUpdateDB_role"/>
+    <partnerLink name="SendSMS" partnerLinkType="ns9:PatientNotification_PL" partnerRole="PatientNotification_Role"/>
+  </partnerLinks>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="inputVariable" messageType="ns1:Read_msg"/>
+    <variable name="WaitingListInput" messageType="ns2:D_WaitingListSelect_inputParameters"/>
+    <variable name="WaitingListOutput" messageType="ns2:DrugwaitinglistCollection_msg"/>
+    <variable name="Counter" type="xsd:int"/>
+    <variable name="PatientId" messageType="ns5:selectByPrimaryKey_inputParameters"/>
+    <variable name="PatientNumber" messageType="ns5:PatientCollection_msg"/>
+    <variable name="Stock" messageType="ns7:PharmacyCollection_msg"/>
+    <variable name="Drug" messageType="ns7:selectByPrimaryKey_inputParameters"/>
+    <variable name="Delete_WL" messageType="ns2:DrugwaitinglistCollection_msg"/>
+    <variable name="DrugsUsed" type="xsd:int"/>
+    <variable name="SMSInput" messageType="ns9:notifyPatientInput"/>
+    <variable name="SMSOutput" messageType="ns9:notifyPatientOutput"/>
+  </variables>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main" id="BpSeq0">
+
+    <!-- Receive input from requestor. (Note: This maps to operation defined in OrderArrival.wsdl) -->
+    <receive name="receiveInput" variable="inputVariable" createInstance="yes" partnerLink="Order" portType="ns1:Read_ptt" operation="Read" id="BpRcv0"/>
+    <invoke name="Invoke1" inputVariable="WaitingListInput" outputVariable="WaitingListOutput" partnerLink="D_WaitingList" portType="ns2:D_WaitingList_ptt" operation="D_WaitingListSelect" bpelx:invokeAsDetail="no" id="BpInv0"/>
+    <assign name="InitializeCounter" id="BpAss0">
+      <copy>
+        <from expression="1"/>
+        <to variable="Counter"/>
+      </copy>
+      <copy>
+        <from expression="0"/>
+        <to variable="DrugsUsed"/>
+      </copy>
+    </assign>
+    <while name="While1" condition="bpws:getVariableData('Counter') &lt;= ora:countNodes('WaitingListOutput','DrugwaitinglistCollection','/ns3:DrugwaitinglistCollection/ns3:Drugwaitinglist') and bpws:getVariableData('DrugsUsed') &lt; bpws:getVariableData('inputVariable','body','/ns4:order/ns4:orderSize')" id="BpWhl0">
+      <sequence name="Sequence1" id="BpSeq1">
+        <assign name="GetPatient-i" id="BpAss1">
+          <copy>
+            <from expression="bpws:getVariableData('WaitingListOutput','DrugwaitinglistCollection',concat('/ns3:DrugwaitinglistCollection/ns3:Drugwaitinglist[',bpws:getVariableData('Counter'),']/ns3:patientId'))"/>
+            <to variable="PatientId" part="selectByPrimaryKey_inputParameters" query="/ns6:PatientPrimaryKey/ns6:patientId"/>
+          </copy>
+          <copy>
+            <from expression="bpws:getVariableData('WaitingListOutput','DrugwaitinglistCollection',concat('/ns3:DrugwaitinglistCollection/ns3:Drugwaitinglist[',bpws:getVariableData('Counter'),']/ns3:patientId'))"/>
+            <to variable="Delete_WL" part="DrugwaitinglistCollection" query="/ns3:DrugwaitinglistCollection/ns3:Drugwaitinglist/ns3:patientId"/>
+          </copy>
+          <copy>
+            <from expression="bpws:getVariableData('WaitingListOutput','DrugwaitinglistCollection',concat('/ns3:DrugwaitinglistCollection/ns3:Drugwaitinglist[',bpws:getVariableData('Counter'),']/ns3:dateVisit'))"/>
+            <to variable="Delete_WL" part="DrugwaitinglistCollection" query="/ns3:DrugwaitinglistCollection/ns3:Drugwaitinglist/ns3:dateVisit"/>
+          </copy>
+          <copy>
+            <from expression="bpws:getVariableData('WaitingListOutput','DrugwaitinglistCollection',concat('/ns3:DrugwaitinglistCollection/ns3:Drugwaitinglist[',bpws:getVariableData('Counter'),']/ns3:dosage'))"/>
+            <to variable="Delete_WL" part="DrugwaitinglistCollection" query="/ns3:DrugwaitinglistCollection/ns3:Drugwaitinglist/ns3:dosage"/>
+          </copy>
+          <copy>
+            <from expression="bpws:getVariableData('WaitingListOutput','DrugwaitinglistCollection',concat('/ns3:DrugwaitinglistCollection/ns3:Drugwaitinglist[',bpws:getVariableData('Counter'),']/ns3:substance'))"/>
+            <to variable="Delete_WL" part="DrugwaitinglistCollection" query="/ns3:DrugwaitinglistCollection/ns3:Drugwaitinglist/ns3:substance"/>
+          </copy>
+          <copy>
+            <from expression="bpws:getVariableData('WaitingListOutput','DrugwaitinglistCollection',concat('/ns3:DrugwaitinglistCollection/ns3:Drugwaitinglist[',bpws:getVariableData('Counter'),']/ns3:drugname'))"/>
+            <to variable="Delete_WL" part="DrugwaitinglistCollection" query="/ns3:DrugwaitinglistCollection/ns3:Drugwaitinglist/ns3:drugname"/>
+          </copy>
+        </assign>
+        <switch name="Switch1" id="BpSwt0">
+          <case condition="bpws:getVariableData('Delete_WL','DrugwaitinglistCollection','/ns3:DrugwaitinglistCollection/ns3:Drugwaitinglist/ns3:drugname') = bpws:getVariableData('inputVariable','body','/ns4:order/ns4:nome') and bpws:getVariableData('inputVariable','body','/ns4:order/ns4:dose') = bpws:getVariableData('Delete_WL','DrugwaitinglistCollection','/ns3:DrugwaitinglistCollection/ns3:Drugwaitinglist/ns3:dosage') and bpws:getVariableData('Delete_WL','DrugwaitinglistCollection','/ns3:DrugwaitinglistCollection/ns3:Drugwaitinglist/ns3:substance') = bpws:getVariableData('inputVariable','body','/ns4:order/ns4:substancia')">
+            <bpelx:annotation>
+              <bpelx:general>
+                <bpelx:property name="userLabel">CorrectDrug</bpelx:property>
+              </bpelx:general>
+            </bpelx:annotation>
+            <sequence id="BpSeq2">
+              <invoke name="GetPatientNumber" inputVariable="PatientId" outputVariable="PatientNumber" partnerLink="PatientsDB" portType="ns5:PatientsDB_ptt" operation="selectByPrimaryKey" bpelx:invokeAsDetail="no" id="BpInv1"/>
+              <assign name="TransformToSMSInput" id="BpAss2">
+                <bpelx:annotation>
+                  <bpelx:pattern>transformation</bpelx:pattern>
+                </bpelx:annotation>
+                <copy>
+                  <from expression="ora:doXSLTransformForDoc('xsl/TransformationToSMSInput.xsl', $inputVariable.body, 'PatientNumber.PatientCollection', $PatientNumber.PatientCollection)"/>
+                  <to variable="SMSInput" part="parameters"/>
+                </copy>
+              </assign>
+              <invoke name="SendSmsInfo" inputVariable="SMSInput" outputVariable="SMSOutput" partnerLink="SendSMS" portType="ns9:PatientNotification" operation="notifyPatient" bpelx:invokeAsDetail="no" id="BpInv2"/>
+              <invoke name="RemovePatientFromWL" inputVariable="Delete_WL" partnerLink="D_WaitingList" portType="ns2:D_WaitingList_ptt" operation="delete" bpelx:invokeAsDetail="no" id="BpInv3"/>
+              <assign name="IncDrugsUsed" id="BpAss3">
+                <copy>
+                  <from expression="bpws:getVariableData('DrugsUsed') + 1"/>
+                  <to variable="DrugsUsed"/>
+                </copy>
+              </assign>
+            </sequence>
+          </case>
+          <otherwise/>
+        </switch>
+        <assign name="IncCounter" id="BpAss4">
+          <copy>
+            <from expression="bpws:getVariableData('Counter') + 1"/>
+            <to variable="Counter"/>
+          </copy>
+        </assign>
+      </sequence>
+    </while>
+    <assign name="TransformToDrug" id="BpAss5">
+      <bpelx:annotation>
+        <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+        <from expression="ora:doXSLTransformForDoc('xsl/TransformationToDrug.xsl', $inputVariable.body)"/>
+        <to variable="Drug" part="selectByPrimaryKey_inputParameters"/>
+      </copy>
+    </assign>
+    <invoke name="GetStock" inputVariable="Drug" outputVariable="Stock" partnerLink="PharmacyUpdateDB" portType="ns7:PharmacyUpdateDB_ptt" operation="selectByPrimaryKey" bpelx:invokeAsDetail="no" id="BpInv4"/>
+    <assign name="TransformToIncrementStock" id="BpAss6">
+      <bpelx:annotation>
+        <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+        <from expression="ora:doXSLTransformForDoc('xsl/TransformationToIncrementStock.xsl', $Stock.PharmacyCollection, 'inputVariable.body', $inputVariable.body)"/>
+        <to variable="Stock" part="PharmacyCollection"/>
+      </copy>
+    </assign>
+    <assign name="ChangeStock" id="BpAss7">
+      <copy>
+        <from expression="bpws:getVariableData('Stock','PharmacyCollection','/ns8:PharmacyCollection/ns8:Pharmacy/ns8:stock') - bpws:getVariableData('DrugsUsed')"/>
+        <to variable="Stock" part="PharmacyCollection" query="/ns8:PharmacyCollection/ns8:Pharmacy/ns8:stock"/>
+      </copy>
+    </assign>
+    <invoke name="UpdateStock" inputVariable="Stock" partnerLink="PharmacyUpdateDB" portType="ns7:PharmacyUpdateDB_ptt" operation="merge" bpelx:invokeAsDetail="no" id="BpInv5"/>
+  </sequence>
+</process><!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Sun Apr 28 17:29:10 WEST 2013
+  Author:  oracle
+  Type: BPEL 1.1 Process
+  Purpose: One Way BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->

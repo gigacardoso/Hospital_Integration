@@ -1,0 +1,34 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<graphics>
+   <diagram optimizeLayout="false" popupEditor="true" fixedWidthSwimlanes="true" roundedPartnerlinks="true" centerZoom="true" validateOnLoad="true" confirmBeforeDelete="true" selectedPartnerLinkColor="0,0,153" swimlaneBackground="240,240,240" swimlaneDividerBackground="218,218,218" graphBackground="255,255,255" selectedBorderBackground="49,105,198" connectedPartnerLinkColor="204,204,255" connectablePartnerLinkColor="0,0,255" unconnectedPartnerLinkColor="192,192,192"/>
+   <annotationfile/>
+   <iconize/>
+   <partnerlink_locations>
+      <partnerlink name="ReadPatientData" x="10" y="90" side="left"/>
+      <partnerlink name="PatientDatabase" x="747" y="278" side="right"/>
+      <partnerlink name="CTTValidator" x="747" y="567" side="right"/>
+      <partnerlink name="DrugValidator" x="747" y="1374" side="right"/>
+      <partnerlink name="DrugDatabase" x="747" y="1557" side="right"/>
+      <partnerlink name="ScreeningDatabase" x="747" y="1753" side="right"/>
+      <partnerlink name="ScreeningDrugDatabase" x="747" y="1886" side="right"/>
+      <partnerlink name="ApprovalRequest.TaskService_1" x="747" y="18" side="right"/>
+      <partnerlink name="SavePatientDB" x="747" y="750" side="right"/>
+      <partnerlink name="BOStart" x="747" y="2339" side="right"/>
+   </partnerlink_locations>
+   <graph_layout viewport="0,0,773,349" show_swimlanes="true">
+      <layout_item collapsed="false" xpath="/process" type="process" showhandlers="true"/>
+      <layout_item collapsed="false" xpath="/process/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[1]" type="switch"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[1]/case/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[1]/otherwise/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/while" type="while"/>
+      <layout_item collapsed="false" xpath="/process/sequence/while/sequence" type="sequence"/>
+      <layout_item collapsed="true" xpath="/process/sequence/scope" type="usertask" showhandlers="true"/>
+      <layout_item collapsed="false" xpath="/process/sequence/scope/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]" type="switch"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[1]/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/case[2]/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/switch[2]/otherwise/sequence" type="sequence"/>
+   </graph_layout>
+   <bookmarks/>
+</graphics>

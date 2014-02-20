@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- XML Schema - XSD -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://saude365.pt"
+            xmlns:tns="http://saude365.pt"
+            elementFormDefault="qualified">
+
+    <xsd:element name="invoice" type="tns:InvoiceType"/>
+
+    <xsd:complexType name="InvoiceType">
+        <xsd:sequence>
+            <xsd:element name="Sender" type="tns:EntityType"/>
+            <xsd:element name="Receiver" type="tns:EntityType"/>
+            <xsd:element name="LineItems" type="tns:DrugType" minOccurs="0" maxOccurs="unbounded">
+            </xsd:element>
+            <xsd:element name="vatSummary" type="tns:SummaryType"/>
+            <xsd:element name="totalPayableAmount" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="SummaryType">
+        <xsd:sequence>
+            <xsd:element name="vatPercentage" type="xsd:string"/>
+            <xsd:element name="vatAmount" type="xsd:string"/>
+            <xsd:element name="taxableAmount" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+    <xsd:complexType name="EntityType">
+        <xsd:sequence>
+            <xsd:element name="id" type="xsd:string"/>
+            <xsd:element name="name" type="xsd:date"/>
+            <xsd:element name="addressInformation" type="tns:AddressType"/>
+            <xsd:element name="vatNumber" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="AddressType">
+        <xsd:sequence>
+            <xsd:element name="address" type="xsd:string"/>
+            <xsd:element name="city" type="xsd:string"/>
+            <xsd:element name="postalCode" type="tns:PostalCodeType"/>
+            <xsd:element name="countryCode" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    
+    <xsd:complexType name="PostalCodeType">
+        <xsd:sequence>
+            <xsd:element name="zip" type="xsd:string"/>
+            <xsd:element name="area" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="DrugType">
+        <xsd:sequence>
+            <xsd:element name="gtinCode" type="xsd:string"/>
+            <xsd:element name="sellerItemCode" type="xsd:string"/>
+            <xsd:element name="buyerItemCode" type="xsd:string"/>
+            <xsd:element name="description" type="xsd:string"/>
+            <xsd:element name="quantity" type="tns:QuantityType"/>
+            <xsd:element name="netUnitPrice" type="xsd:string"/>
+            <xsd:element name="grossUnitPrice" type="xsd:string"/>
+            <xsd:element name="vatPercentage" type="xsd:string"/>
+            <xsd:element name="vatAmount" type="xsd:string"/>
+            <xsd:element name="taxableAmount" type="xsd:string"/>
+            <xsd:element name="netAmount" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="QuantityType">
+        <xsd:sequence>
+            <xsd:element name="value" type="xsd:string"/>
+            <xsd:element name="unitOfMeasure" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+</xsd:schema>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="ExamReady" targetNamespace="http://xmlns.oracle.com/Saude365/HSN/ExamReady" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:client="http://xmlns.oracle.com/Saude365/HSN/ExamReady" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/file/Saude365/HSN/Exam" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/PatientDataBase" xmlns:ns4="http://saude365.pt" xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/db/top/PatientDataBase" xmlns:ns5="http://patientnotification/" id="BpPrc0">
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  --> 
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="Exam" partnerLinkType="ns1:Read_plt" myRole="Read_role"/>
+    <partnerLink name="PatientDataBase" partnerLinkType="ns2:PatientDataBase_plt" partnerRole="PatientDataBase_role"/>
+    <partnerLink name="PatientNotification" partnerLinkType="ns5:PatientNotification_PL" partnerRole="PatientNotification_Role"/>
+  </partnerLinks>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="inputVariable" messageType="ns1:Read_msg"/>
+    <variable name="PatientID" messageType="ns2:selectByPrimaryKey_inputParameters"/>
+    <variable name="PatientInfo" messageType="ns2:PatientCollection_msg"/>
+    <variable name="NotificationInput" messageType="ns5:notifyPatientInput"/>
+    <variable name="SMSOutput" messageType="ns5:notifyPatientOutput"/>
+  </variables>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main" id="BpSeq0">
+
+    <!-- Receive input from requestor. (Note: This maps to operation defined in ExamReady.wsdl) -->
+    <receive name="receiveInput" variable="inputVariable" createInstance="yes" partnerLink="Exam" portType="ns1:Read_ptt" operation="Read" id="BpRcv0"/>
+    <assign name="AssignPatientID" id="BpAss0">
+      <copy>
+        <from variable="inputVariable" part="body" query="/ns4:Exam/ns4:id"/>
+        <to variable="PatientID" part="selectByPrimaryKey_inputParameters" query="/ns3:PatientPrimaryKey/ns3:patientId"/>
+      </copy>
+    </assign>
+    <invoke name="GetPhoneNumber" inputVariable="PatientID" outputVariable="PatientInfo" partnerLink="PatientDataBase" portType="ns2:PatientDataBase_ptt" operation="selectByPrimaryKey" bpelx:invokeAsDetail="no" id="BpInv0"/>
+    <assign name="TransformToExamSMS" id="BpAss1">
+      <bpelx:annotation>
+        <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+        <from expression="ora:doXSLTransformForDoc('xsl/TransformationToExamNotification.xsl', $PatientInfo.PatientCollection)"/>
+        <to variable="NotificationInput" part="parameters"/>
+      </copy>
+    </assign>
+    <invoke name="SendSMS" inputVariable="NotificationInput" partnerLink="PatientNotification" portType="ns5:PatientNotification" operation="notifyPatient" outputVariable="SMSOutput" bpelx:invokeAsDetail="no" id="BpInv1"/>
+  </sequence>
+</process><!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Sun Apr 28 18:20:21 WEST 2013
+  Author:  oracle
+  Type: BPEL 1.1 Process
+  Purpose: One Way BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->

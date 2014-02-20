@@ -1,0 +1,21 @@
+<adapter-config name="DownloadFTPAdapter" adapter="FTP Adapter" wsdlLocation="DownloadFTPAdapter.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/Ftp/Saphety" UIincludeWildcard="*"/>
+  <endpoint-activation portType="Get_ptt" operation="Get">
+    <activation-spec className="oracle.tip.adapter.ftp.inbound.FTPActivationSpec">
+      <property name="FileNameSubstringBegin" value="0"/>
+      <property name="DeleteFile" value="false"/>
+      <property name="MinimumAge" value="0"/>
+      <property name="PhysicalDirectory" value="IN/IST02"/>
+      <property name="Recursive" value="true"/>
+      <property name="FileModificationTime" value="Filename"/>
+      <property name="PollingFrequency" value="60"/>
+      <property name="FileType" value="ascii"/>
+      <property name="IncludeFiles" value=".*"/>
+      <property name="UseHeaders" value="false"/>
+      <property name="ModificationTimeFormat" value="yyyyMMddHHmmSS"/>
+      <property name="FileNameSubstringEnd" value="13"/>
+    </activation-spec>
+  </endpoint-activation>
+
+</adapter-config>

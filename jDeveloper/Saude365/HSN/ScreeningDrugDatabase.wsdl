@@ -1,0 +1,25 @@
+<?binding.jca ScreeningDrugDatabase_db.jca?>
+<wsdl:definitions name="ScreeningDrugDatabase" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/ScreeningDrugDatabase" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/Saude365/HSN/ScreeningDrugDatabase" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/ScreeningDrugDatabase">
+    <plt:partnerLinkType name="ScreeningDrugDatabase_plt">
+        <plt:role name="ScreeningDrugDatabase_role">
+            <plt:portType name="tns:ScreeningDrugDatabase_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/ScreeningDrugDatabase" schemaLocation="xsd/ScreeningDrugDatabase_table.xsd"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="selectByPrimaryKey_inputParameters">
+        <wsdl:part name="selectByPrimaryKey_inputParameters" element="top:ScreeningPrimaryKey"/>
+    </wsdl:message>
+    <wsdl:message name="ScreeningCollection_msg">
+        <wsdl:part name="ScreeningCollection" element="top:ScreeningCollection"/>
+    </wsdl:message>
+    <wsdl:portType name="ScreeningDrugDatabase_ptt">
+        <wsdl:operation name="selectByPrimaryKey">
+            <wsdl:input message="tns:selectByPrimaryKey_inputParameters"/>
+            <wsdl:output message="tns:ScreeningCollection_msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

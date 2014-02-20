@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<JavaBean xmlns="http://xmlns.oracle.com/adfm/beanmodel" version="11.1.1.61.92"
+          id="ApprovalRequestPayloadType" Package="ApprovalForm_ApprovalRequest"
+          BeanClass="ApprovalForm_ApprovalRequest.ApprovalRequestPayloadType"
+          isJavaBased="false">
+  <AccessorAttribute id="Screening" IsCollection="true"
+                     BeanClass="ApprovalForm_ApprovalRequest.Screening"
+                     CollectionBeanClass="ApprovalForm_ApprovalRequest.Screening_Screening_Operations">
+    <Properties>
+      <Property Name="minOccurs" Value="1"/>
+      <Property Name="maxOccurs" Value="1"/>
+      <Property Name="LABEL" Value="Screening"/>
+      <Property Name="nillable" Value="false"/>
+      <Property Name="originalName" Value="Screening"/>
+      <Property Name="targetNamespace"
+                Value="http://xmlns.oracle.com/bpel/workflow/task"/>
+    </Properties>
+  </AccessorAttribute>
+</JavaBean>

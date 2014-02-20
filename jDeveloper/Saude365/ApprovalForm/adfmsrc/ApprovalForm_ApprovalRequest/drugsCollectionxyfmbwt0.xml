@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<JavaBean xmlns="http://xmlns.oracle.com/adfm/beanmodel" version="11.1.1.61.92"
+          id="drugsCollectionxyfmbwt0" Package="ApprovalForm_ApprovalRequest"
+          BeanClass="ApprovalForm_ApprovalRequest.drugsCollectionxyfmbwt0"
+          isJavaBased="false">
+  <AccessorAttribute id="Drugs" IsCollection="true"
+                     BeanClass="ApprovalForm_ApprovalRequest.Drugs"
+                     CollectionBeanClass="ApprovalForm_ApprovalRequest.Drugs_Drugs_Operations">
+    <Properties>
+      <Property Name="minOccurs" Value="0"/>
+      <Property Name="maxOccurs" Value="2147483640"/>
+      <Property Name="LABEL" Value="Drugs"/>
+      <Property Name="nillable" Value="false"/>
+      <Property Name="originalName" Value="Drugs"/>
+      <Property Name="targetNamespace"
+                Value="http://xmlns.oracle.com/pcbpel/adapter/db/top/ScreeningDrugDatabase"/>
+    </Properties>
+  </AccessorAttribute>
+</JavaBean>

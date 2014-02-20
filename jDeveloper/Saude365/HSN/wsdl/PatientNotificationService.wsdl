@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<wsdl:definitions
+     name="PatientNotificationService"
+     targetNamespace="http://patientnotification/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://patientnotification/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+     xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+    >
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://patientnotification/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://patientnotification/">
+            <xsd:complexType name="notifyPatient">
+                <xsd:sequence>
+                    <xsd:element name="arg0" type="xsd:string"/>
+                    <xsd:element name="arg1" type="xsd:string"/>
+                    <xsd:element name="arg2" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="notifyPatient" type="tns:notifyPatient"/>
+            <xsd:complexType name="notifyPatientResponse">
+                <xsd:sequence>
+                    <xsd:element name="return" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="notifyPatientResponse" type="tns:notifyPatientResponse"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="notifyPatientInput">
+        <wsdl:part name="parameters" element="tns:notifyPatient"/>
+    </wsdl:message>
+    <wsdl:message name="notifyPatientOutput">
+        <wsdl:part name="parameters" element="tns:notifyPatientResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="PatientNotification">
+        <wsdl:operation name="notifyPatient">
+            <wsdl:input message="tns:notifyPatientInput" xmlns:ns1="http://www.w3.org/2006/05/addressing/wsdl"
+                 ns1:Action=""/>
+            <wsdl:output message="tns:notifyPatientOutput" xmlns:ns1="http://www.w3.org/2006/05/addressing/wsdl"
+                 ns1:Action=""/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="PatientNotificationSoapHttp" type="tns:PatientNotification">
+        <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+        <wsdl:operation name="notifyPatient">
+            <soap12:operation soapAction="" soapActionRequired="false"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="PatientNotificationService">
+        <wsdl:port name="PatientNotificationSoap12HttpPort" binding="tns:PatientNotificationSoapHttp">
+            <soap12:address location="http://localhost:7101/Saude365-PatientNotification-context-root/PatientNotificationSoap12HttpPort"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

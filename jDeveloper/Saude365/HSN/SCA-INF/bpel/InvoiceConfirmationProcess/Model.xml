@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="InvoiceConfirmationProcess" targetNamespace="http://xmlns.oracle.com/Saude365/HSN/InvoiceConfirmationProcess" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:client="http://xmlns.oracle.com/Saude365/HSN/InvoiceConfirmationProcess" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/ftp/Saude365/HSN/DownloadFTPAdapter" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/file/Saude365/HSN/WriteStatus" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" id="BpPrc0">
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  --> 
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="DownloadFTPAdapter" partnerLinkType="ns1:Get_plt" myRole="Get_role"/>
+    <partnerLink name="WriteStatus" partnerLinkType="ns2:Write_plt" partnerRole="Write_role"/>
+  </partnerLinks>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="inputVariable" messageType="ns1:Get_msg"/>
+    <variable name="StatusToWrite" messageType="ns2:Write_msg"/>
+  </variables>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main" id="BpSeq0">
+
+    <!-- Receive input from requestor. (Note: This maps to operation defined in InvoiceConfirmationProcess.wsdl) -->
+    <receive name="receiveInput" variable="inputVariable" createInstance="yes" partnerLink="DownloadFTPAdapter" portType="ns1:Get_ptt" operation="Get" id="BpRcv0"/>
+    <assign name="TransformWriteStatus" id="BpAss0">
+      <bpelx:annotation>
+        <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+        <from expression="ora:doXSLTransformForDoc('xsl/TransformationToStatus.xsl', $inputVariable.body)"/>
+        <to variable="StatusToWrite" part="body"/>
+      </copy>
+    </assign>
+    <invoke name="WriteStatus" inputVariable="StatusToWrite" partnerLink="WriteStatus" portType="ns2:Write_ptt" operation="Write" bpelx:invokeAsDetail="no" id="BpInv0"/>
+  </sequence>
+</process><!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Fri May 03 16:22:03 WEST 2013
+  Author:  oracle
+  Type: BPEL 1.1 Process
+  Purpose: One Way BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
